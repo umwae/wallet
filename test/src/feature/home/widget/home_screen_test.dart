@@ -1,17 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sizzle_starter/src/core/utils/logger.dart';
-import 'package:sizzle_starter/src/core/utils/test/test_widget_controller.dart';
-import 'package:sizzle_starter/src/feature/home/widget/home_screen.dart';
-import 'package:sizzle_starter/src/feature/initialization/model/dependencies_container.dart';
+import 'package:stonwallet/src/core/utils/logger.dart';
+import 'package:stonwallet/src/core/utils/test/test_widget_controller.dart';
+import 'package:stonwallet/src/feature/home/widget/home_screen.dart';
+import 'package:stonwallet/src/feature/initialization/model/dependencies_container.dart';
 
 void main() {
-  group('HomeScreen', () {
+  group('HomePage', () {
     testWidgets('renders correctly', (widgetTester) async {
       final controller = TestWidgetController(widgetTester);
 
       await controller.pumpWidget(
-        const HomeScreen(),
-        dependencies: const HomeScreenDependenciesContainer(),
+        const HomePage(),
+        dependencies: const HomePageDependenciesContainer(),
       );
 
       expect(find.text('Welcome to Sizzle Starter!'), findsOneWidget);
@@ -25,9 +25,9 @@ void main() {
 /// If the dependency is dynamic, like mocks, you can pass them as parameters
 /// to the constructor.
 /// {@endtemplate}
-base class HomeScreenDependenciesContainer extends TestDependenciesContainer {
+base class HomePageDependenciesContainer extends TestDependenciesContainer {
   /// {@macro home_screen_dependencies_container}
-  const HomeScreenDependenciesContainer();
+  const HomePageDependenciesContainer();
 
   @override
   Logger get logger => const NoOpLogger();

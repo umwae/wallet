@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizzle_starter/src/core/constant/config.dart';
-import 'package:sizzle_starter/src/core/utils/app_bloc_observer.dart';
-import 'package:sizzle_starter/src/core/utils/bloc_transformer.dart';
-import 'package:sizzle_starter/src/core/utils/logger.dart';
-import 'package:sizzle_starter/src/feature/initialization/logic/composition_root.dart';
-import 'package:sizzle_starter/src/feature/initialization/widget/app.dart';
-import 'package:sizzle_starter/src/feature/initialization/widget/initialization_failed_app.dart';
+import 'package:stonwallet/src/core/constant/config.dart';
+import 'package:stonwallet/src/core/utils/app_bloc_observer.dart';
+import 'package:stonwallet/src/core/utils/bloc_transformer.dart';
+import 'package:stonwallet/src/core/utils/logger.dart';
+import 'package:stonwallet/src/feature/counter_observer.dart';
+import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
+import 'package:stonwallet/src/feature/initialization/widget/app.dart';
+import 'package:stonwallet/src/feature/initialization/widget/initialization_failed_app.dart';
 
 /// {@template app_runner}
 /// A class which is responsible for initialization and running the app.
@@ -37,6 +38,7 @@ final class AppRunner {
     const config = Config();
 
     Future<void> initializeAndRun() async {
+      // Bloc.observer = const CounterObserver();
       try {
         final result = await CompositionRoot(config, logger).compose();
         // Attach this widget to the root of the tree.

@@ -1,5 +1,4 @@
-name: sizzle_starter
-description: Production-ready template for Flutter applications.
+name: stonwallet
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
@@ -27,19 +26,24 @@ dependencies:
   rxdart: ^0.28.0
 
   # BLoC
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.1.0
 
   # Networking
   http: ^1.2.2
+  json_annotation: ^4.6.0
   cronet_http: ^1.3.2
   cupertino_http: ^2.0.1
 
   # Storing data
   shared_preferences: ^2.3.2
-  drift: ^2.21.0
-  drift_flutter: ^0.2.1
+  # drift: ^2.21.0
+  # drift_flutter: ^0.2.1
 
   # Logging
+  auth_repository:
+    path: packages/auth_repository
+  user_repository:
+    path: packages/user_repository
   stack_trace: ^1.11.1
   sentry_flutter: ^8.9.0
 
@@ -54,8 +58,19 @@ dependencies:
   clock: ^1.1.1
   fake_async: ^1.3.1
   package_info_plus: ^8.1.0
+  custom_refresh_indicator: ^4.0.1
+  open_meteo: ^2.0.3
+  equatable: ^2.0.7
+  uuid: ^4.5.1
+  # flutter_login: ^4.1.1
+  formz: ^0.8.0
+  back_button_interceptor: ^8.0.4
 
 dev_dependencies:
+  bloc_test: ^10.0.0
+  integration_test:
+    sdk: flutter
+  json_serializable: ^6.3.1
   # Testing
   mockito: ^5.4.4
 
@@ -68,7 +83,7 @@ dev_dependencies:
   flutter_native_splash: ^2.4.2
 
   # Codegen
-  drift_dev: ^2.21.2
+  # drift_dev: ^2.21.2
   build_runner: ^2.4.13
 
 flutter:
@@ -89,7 +104,7 @@ flutter_launcher_icons:
   image_path_android: "assets/images/icon-1024x1024.png"
   image_path_ios: "assets/images/icon-1024x1024.png"
   android: true # can specify file name here e.g. "ic_launcher"
-  ios: true # can specify file name here e.g. "My-Launcher-Icon"
+  ios: false # can specify file name here e.g. "My-Launcher-Icon"
   # adaptive_icon_background: "assets/images/christmas-background.png" # only available for Android 8.0 devices and above
   # adaptive_icon_foreground: "assets/images/icon-foreground-432x432.png" # only available for Android 8.0 devices and above
   min_sdk_android: 21 # android min sdk min:16, default 21
@@ -97,16 +112,16 @@ flutter_launcher_icons:
   background_color_ios: "#ffffff"
 
   web:
-    generate: true
+    generate: false
     image_path: "assets/images/icon-1024x1024.png"
     # background_color: "#hexcode"
     # theme_color: "#hexcode"
 
   windows:
-    generate: true
+    generate: false
     image_path: "assets/images/icon-1024x1024.png"
     icon_size: 48 # min:48, max:256, default: 48
 
   macos:
-    generate: true
+    generate: false
     image_path: "assets/images/icon-1024x1024.png"

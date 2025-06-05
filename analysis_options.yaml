@@ -1,6 +1,8 @@
 include: package:sizzle_lints/lints.yaml
 
 analyzer:
+  errors:
+    eol_at_end_of_file: ignore
   exclude: 
     - "lib/src/core/localization/generated/**"
 

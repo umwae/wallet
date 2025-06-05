@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_scope.dart';
-import 'package:sizzle_starter/src/feature/settings/bloc/app_settings_bloc.dart';
-import 'package:sizzle_starter/src/feature/settings/model/app_settings.dart';
+import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
+import 'package:stonwallet/src/feature/settings/model/app_settings.dart';
 
 /// {@template settings_scope}
 /// SettingsScope widget.

@@ -1,8 +1,12 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:sizzle_starter/src/core/constant/localization/localization.dart';
-import 'package:sizzle_starter/src/feature/home/widget/home_screen.dart';
-import 'package:sizzle_starter/src/feature/initialization/model/app_theme.dart';
-import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
+import 'package:stonwallet/src/core/constant/localization/localization.dart';
+import 'package:stonwallet/src/feature/counter/counter.dart';
+import 'package:stonwallet/src/feature/home/widget/home_screen.dart';
+import 'package:stonwallet/src/feature/initialization/model/app_theme.dart';
+import 'package:stonwallet/src/feature/login/view/login_page.dart';
+import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/settings/widget/settings_scope.dart';
 
 /// {@template material_context}
 /// [MaterialContext] is an entry point to the material context.
@@ -11,11 +15,13 @@ import 'package:sizzle_starter/src/feature/settings/widget/settings_scope.dart';
 /// {@endtemplate}
 class MaterialContext extends StatelessWidget {
   /// {@macro material_context}
-  const MaterialContext({super.key});
+  MaterialContext({super.key});
 
   // This global key is needed for [MaterialApp]
   // to work properly when Widgets Inspector is enabled.
   static final _globalKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _preserveKey = GlobalKey<State<StatefulWidget>>();
+  final debugObserver = DebugObserver();
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +35,34 @@ class MaterialContext extends StatelessWidget {
       locale: settings.locale,
       localizationsDelegates: Localization.localizationDelegates,
       supportedLocales: Localization.supportedLocales,
-      home: const HomeScreen(),
-      builder: (context, child) => MediaQuery(
+      title: 'Declarative Navigation',
+      debugShowCheckedModeBanner: true,
+      // home: CustomMaterialIndicator(
+      //     clipBehavior: Clip.antiAlias,
+      //     trigger: IndicatorTrigger.bothEdges,
+      //     triggerMode: IndicatorTriggerMode.anywhere,
+      //     onRefresh: () => Future.delayed(const Duration(seconds: 2)),
+      //     // builder: (context, child, controller) =>
+      //     //     DecoratedBox(decoration: const BoxDecoration(color: Colors.red), child: child),
+      //     child: const LoginPage(),
+      //   ),
+      builder: (context, child) =>
+          //Масштабирование текста
+          MediaQuery(
         key: _globalKey,
         data: mediaQueryData.copyWith(
           textScaler: TextScaler.linear(
             mediaQueryData.textScaler.scale(settings.textScale ?? 1).clamp(0.5, 2),
           ),
         ),
-        child: child!,
+        child: AppNavigator(
+          key: _preserveKey,
+          pages: const [MaterialPage<void>(child: LoginPage())],
+          observers: [debugObserver],
+          guards: [
+            // authGuard(authState)
+          ],
+        ),
       ),
     );
   }
