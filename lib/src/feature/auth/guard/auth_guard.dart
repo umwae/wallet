@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auth_repository/auth_repository.dart';
 import 'package:stonwallet/src/feature/auth/bloc/auth_bloc.dart';
-import 'package:stonwallet/src/feature/home/widget/home_screen.dart';
+import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 

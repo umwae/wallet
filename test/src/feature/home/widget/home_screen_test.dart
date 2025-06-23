@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
 import 'package:stonwallet/src/core/utils/test/test_widget_controller.dart';
-import 'package:stonwallet/src/feature/home/widget/home_screen.dart';
+import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/initialization/model/dependencies_container.dart';
 
 void main() {

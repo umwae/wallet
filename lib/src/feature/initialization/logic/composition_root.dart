@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stonwallet/src/core/constant/config.dart';
+import 'package:stonwallet/src/core/service/secure_storage_service.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/error_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/sentry_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
@@ -108,6 +109,7 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
   @override
   Future<DependenciesContainer> create() async {
     final sharedPreferences = SharedPreferencesAsync();
+    final secureStorage = SecureStorageFactory().create();
 
     final packageInfo = await PackageInfo.fromPlatform();
     final errorTrackingManager = await ErrorTrackingManagerFactory(config, logger).create();
@@ -116,6 +118,7 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
     return DependenciesContainer(
       logger: logger,
       config: config,
+      secureStorage: secureStorage,
       appSettingsBloc: settingsBloc,
       errorTrackingManager: errorTrackingManager,
       packageInfo: packageInfo,
@@ -162,6 +165,7 @@ class SettingsBlocFactory extends AsyncFactory<AppSettingsBloc> {
   /// Shared preferences instance
   final SharedPreferencesAsync sharedPreferences;
 
+
   @override
   Future<AppSettingsBloc> create() async {
     final appSettingsRepository = AppSettingsRepositoryImpl(
@@ -175,5 +179,15 @@ class SettingsBlocFactory extends AsyncFactory<AppSettingsBloc> {
       appSettingsRepository: appSettingsRepository,
       initialState: initialState,
     );
+  }
+}
+
+/// {@template secure_storage_factory}
+/// Factory that creates an instance of [SecureStorageService].
+/// {@endtemplate}
+class SecureStorageFactory extends Factory<SecureStorageService> {
+  @override
+  SecureStorageService create() {
+    return SecureStorageService();
   }
 }

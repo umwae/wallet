@@ -1,5 +1,6 @@
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stonwallet/src/core/constant/config.dart';
+import 'package:stonwallet/src/core/service/secure_storage_service.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/error_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
@@ -21,6 +22,7 @@ class DependenciesContainer {
     required this.appSettingsBloc,
     required this.errorTrackingManager,
     required this.packageInfo,
+    required this.secureStorage,
   });
 
   /// [Logger] instance, used to log messages.
@@ -37,6 +39,9 @@ class DependenciesContainer {
 
   /// [PackageInfo] instance, contains information about the application.
   final PackageInfo packageInfo;
+
+  /// [SecureStorageService] instance, used for secure storage operations
+  final SecureStorageService secureStorage;
 }
 
 /// {@template testing_dependencies_container}

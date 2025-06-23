@@ -12,7 +12,8 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:stonwallet/src/feature/counter/counter.dart';
-import 'package:stonwallet/src/feature/home/widget/home_screen.dart';
+import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
+import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 
 /// Type definition for the navigation state.
@@ -264,7 +265,8 @@ class DebugObserver extends NavigatorObserver {
 enum Routes {
   home,
   login,
-  counter;
+  counter,
+  currentDetail;
 
   const Routes();
 
@@ -284,6 +286,7 @@ enum Routes {
           Routes.home => const HomePage(),
           Routes.login => const LoginPage(),
           Routes.counter =>  CounterPage(),
+          Routes.currentDetail =>  CurrentDetailPage(),
         },
       );
 }

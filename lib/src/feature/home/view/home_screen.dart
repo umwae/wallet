@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
@@ -188,14 +189,17 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
             SliverList(
               delegate: SliverChildListDelegate([
                 Column(
-                  children: const [
-                    _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
+                  children: [
+                    InkWell(
+                      child: const _AssetItem(
+                        name: 'Ethereum',
+                        value: '\$2.13',
+                        amount: '0.00112 ETH',
+                        icon: Icons.currency_bitcoin,
+                        subtitle: 'Earn 4.11% APY',
+                        subtitleColor: Colors.green,
+                      ),
+                      onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
                     ),
                     _AssetItem(
                       name: 'MATIC',
@@ -280,19 +284,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Assets'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Transactions'),
-          BottomNavigationBarItem(icon: Icon(Icons.language), label: 'Browser'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        ],
-      ),
+      bottomNavigationBar: const MainNavigationBar(),
     );
   }
 }
