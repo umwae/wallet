@@ -25,7 +25,6 @@ abstract class BasePage extends StatelessWidget {
       },
       child: CustomMaterialIndicator(
         clipBehavior: Clip.antiAlias,
-        trigger: IndicatorTrigger.bothEdges,
         triggerMode: IndicatorTriggerMode.anywhere,
         onRefresh: onRefresh,
         child: buildContent(context),
@@ -61,7 +60,6 @@ abstract class BaseStatefulPageState<T extends BaseStatefulPage> extends State<T
       },
       child: CustomMaterialIndicator(
         clipBehavior: Clip.antiAlias,
-        trigger: IndicatorTrigger.bothEdges,
         triggerMode: IndicatorTriggerMode.anywhere,
         onRefresh: onRefresh,
         child: buildContent(context),
