@@ -1,6 +1,8 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:stonwallet/src/core/constant/localization/localization.dart';
+import 'package:stonwallet/src/feature/auth/bloc/auth_bloc.dart';
+import 'package:stonwallet/src/feature/auth/guard/auth_guard.dart';
 import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/initialization/model/app_theme.dart';
@@ -37,33 +39,26 @@ class MaterialContext extends StatelessWidget {
       supportedLocales: Localization.supportedLocales,
       title: 'Declarative Navigation',
       debugShowCheckedModeBanner: true,
-      // home: CustomMaterialIndicator(
-      //     clipBehavior: Clip.antiAlias,
-      //     trigger: IndicatorTrigger.bothEdges,
-      //     triggerMode: IndicatorTriggerMode.anywhere,
-      //     onRefresh: () => Future.delayed(const Duration(seconds: 2)),
-      //     // builder: (context, child, controller) =>
-      //     //     DecoratedBox(decoration: const BoxDecoration(color: Colors.red), child: child),
-      //     child: const LoginPage(),
+      home: TabNavigator(),
+      // builder: (context, child) =>
+      //     //Масштабирование текста
+      //     MediaQuery(
+      //   key: _globalKey,
+      //   data: mediaQueryData.copyWith(
+      //     textScaler: TextScaler.linear(
+      //       mediaQueryData.textScaler.scale(settings.textScale ?? 1).clamp(0.5, 2),
+      //     ),
       //   ),
-      builder: (context, child) =>
-          //Масштабирование текста
-          MediaQuery(
-        key: _globalKey,
-        data: mediaQueryData.copyWith(
-          textScaler: TextScaler.linear(
-            mediaQueryData.textScaler.scale(settings.textScale ?? 1).clamp(0.5, 2),
-          ),
-        ),
-        child: AppNavigator(
-          key: _preserveKey,
-          pages: const [MaterialPage<void>(child: LoginPage())],
-          observers: [debugObserver],
-          guards: [
-            // authGuard(authState)
-          ],
-        ),
-      ),
+      //   // child: const TabNavigator(),
+      //   // child: AppNavigator(
+      //   //   key: _preserveKey,
+      //   //   pages: const [MaterialPage<void>(child: LoginPage())],
+      //   //   observers: [debugObserver],
+      //   //   guards: [
+      //   //     // authGuard(authState)
+      //   //   ],
+      //   // ),
+      // ),
     );
   }
 }

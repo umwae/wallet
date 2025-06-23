@@ -1,10 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/current_detail/view/chart_graph.dart';
-import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 
 class CurrentDetailView extends StatelessWidget {
   const CurrentDetailView({super.key});
@@ -192,7 +189,7 @@ class CurrentDetailView extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const MainNavigationBar(),
+      // bottomNavigationBar: const MainNavigationBar(),
     );
   }
 }

@@ -284,7 +284,6 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
           ],
         ),
       ),
-      bottomNavigationBar: const MainNavigationBar(),
     );
   }
 }

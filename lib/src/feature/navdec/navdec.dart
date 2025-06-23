@@ -11,10 +11,12 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
+import 'package:stonwallet/src/feature/transactions/view/transactions_page.dart';
 
 /// Type definition for the navigation state.
 typedef NavigationState = List<Page<Object?>>;
@@ -31,8 +33,8 @@ class AppNavigator extends StatefulWidget {
     this.transitionDelegate = const DefaultTransitionDelegate<Object?>(),
     this.revalidate,
     super.key,
-  }) : assert(pages.isNotEmpty, 'pages cannot be empty'),
-       controller = null;
+  })  : assert(pages.isNotEmpty, 'pages cannot be empty'),
+        controller = null;
 
   /// {@macro navigator}
   AppNavigator.controlled({
@@ -42,8 +44,8 @@ class AppNavigator extends StatefulWidget {
     this.transitionDelegate = const DefaultTransitionDelegate<Object?>(),
     this.revalidate,
     super.key,
-  }) : assert(controller.value.isNotEmpty, 'controller cannot be empty'),
-       pages = controller.value;
+  })  : assert(controller.value.isNotEmpty, 'controller cannot be empty'),
+        pages = controller.value;
 
   /// The [AppNavigatorState] from the closest instance of this class
   /// that encloses the given context, if any.
@@ -52,19 +54,18 @@ class AppNavigator extends StatefulWidget {
 
   /// The navigation state from the closest instance of this class
   /// that encloses the given context, if any.
-  static NavigationState? stateOf(BuildContext context) =>
-      maybeOf(context)?.state;
+  static NavigationState? stateOf(BuildContext context) => maybeOf(context)?.state;
 
   /// The navigator from the closest instance of this class
   /// that encloses the given context, if any.
-  static NavigatorState? navigatorOf(BuildContext context) =>
-      maybeOf(context)?.navigator;
+  static NavigatorState? navigatorOf(BuildContext context) => maybeOf(context)?.navigator;
 
   /// Change the pages.
   static void change(
     BuildContext context,
     NavigationState Function(NavigationState pages) fn,
-  ) => maybeOf(context)?.change(fn);
+  ) =>
+      maybeOf(context)?.change(fn);
 
   /// Add a page to the stack.
   static void push(BuildContext context, Page<Object?> page) =>
@@ -72,9 +73,9 @@ class AppNavigator extends StatefulWidget {
 
   /// Pop the last page from the stack.
   static void pop(BuildContext context) => change(context, (state) {
-    if (state.isNotEmpty) state.removeLast();
-    return state;
-  });
+        if (state.isNotEmpty) state.removeLast();
+        return state;
+      });
 
   /// Clear the pages to the initial state.
   static void reset(BuildContext context, Page<Object?> page) {
@@ -199,17 +200,16 @@ class AppNavigatorState extends State<AppNavigator> {
     debugPrint('[DBG] New nav stack: ${_state.map((e) => e.name)}');
   }
 
-  void _onDidRemovePage(Page<Object?> page) =>
-      change((pages) => pages..remove(page));
+  void _onDidRemovePage(Page<Object?> page) => change((pages) => pages..remove(page));
 
   @override
   Widget build(BuildContext context) => Navigator(
-    pages: _state,
-    reportsRouteUpdateToEngine: true,
-    transitionDelegate: widget.transitionDelegate,
-    onDidRemovePage: _onDidRemovePage,
-    observers: _observers,
-  );
+        pages: _state,
+        reportsRouteUpdateToEngine: true,
+        transitionDelegate: widget.transitionDelegate,
+        onDidRemovePage: _onDidRemovePage,
+        observers: _observers,
+      );
 }
 
 class DebugObserver extends NavigatorObserver {
@@ -266,27 +266,28 @@ enum Routes {
   home,
   login,
   counter,
-  currentDetail;
+  currentDetail,
+  transactions;
 
   const Routes();
 
   /// Converts the route to a [MaterialPage].
-  Page<Object?> page({Map<String, Object?>? arguments, LocalKey? key}) =>
-      MaterialPage<void>(
+  Page<Object?> page({Map<String, Object?>? arguments, LocalKey? key}) => MaterialPage<void>(
         name: name,
         arguments: arguments,
         key: switch ((key, arguments)) {
           (LocalKey key, _) => key,
           (_, Map<String, Object?> arguments) => ValueKey(
-            '$name#${shortHash(arguments)}',
-          ),
+              '$name#${shortHash(arguments)}',
+            ),
           _ => ValueKey<String>(name),
         },
         child: switch (this) {
           Routes.home => const HomePage(),
           Routes.login => const LoginPage(),
-          Routes.counter =>  CounterPage(),
-          Routes.currentDetail =>  CurrentDetailPage(),
+          Routes.counter => CounterPage(),
+          Routes.currentDetail => CurrentDetailPage(),
+          Routes.transactions => TransactionsPage(),
         },
       );
 }
@@ -337,3 +338,57 @@ enum Routes {
 //     body: const SafeArea(child: Center(child: Text('Settings'))),
 //   );
 // }
+
+class TabNavigator extends StatefulWidget {
+  final List<NavigationState Function(NavigationState)> guards;
+
+  static TabNavigator? _instance;
+
+  factory TabNavigator({
+    Key? key,
+    List<NavigationState Function(NavigationState)> guards = const [],
+  }) {
+    _instance ??= TabNavigator._internal(key: key, guards: guards);
+    return _instance!;
+  }
+
+  const TabNavigator._internal({
+    super.key,
+    this.guards = const [],
+  });
+
+  @override
+  State<TabNavigator> createState() => _TabNavigatorState();
+}
+
+class _TabNavigatorState extends State<TabNavigator> {
+  int _index = 0;
+
+  late final List<NavigationState Function(NavigationState)> _guards = widget.guards;
+
+  // Отдельные навигационные стеки для каждой вкладки
+  final _tabs = [
+    [Routes.home.page()],
+    [Routes.transactions.page()],
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _index,
+        children: _tabs.map((stack) {
+          return AppNavigator(
+            key: ValueKey(stack.first.name), // чтобы сохранить состояние
+            pages: stack,
+            guards: _guards,
+          );
+        }).toList(),
+      ),
+      bottomNavigationBar: MainNavigationBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+      ),
+    );
+  }
+}
