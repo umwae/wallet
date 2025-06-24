@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_auth_bloc.dart';
 
 /// {@template home_screen}
 /// HomePage is a simple screen that displays a grid of items.
@@ -25,6 +27,9 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _homeLogger.info('HomePage initialized');
+    
+    // Инициируем аутентификацию CoinGecko
+    context.read<CoinGeckoAuthBloc>().add(AuthenticateCoinGeckoEvent());
   }
 
   @override

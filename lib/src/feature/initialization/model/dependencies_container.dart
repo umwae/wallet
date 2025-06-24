@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stonwallet/src/core/constant/config.dart';
 import 'package:stonwallet/src/core/service/secure_storage_service.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/error_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
+import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
+import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/authenticate_coingecko_usecase.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
 
@@ -23,6 +27,10 @@ class DependenciesContainer {
     required this.errorTrackingManager,
     required this.packageInfo,
     required this.secureStorage,
+    required this.coinGeckoDio,
+    required this.coinGeckoApiService,
+    required this.coinGeckoRepository,
+    required this.coinGeckoUseCase,
   });
 
   /// [Logger] instance, used to log messages.
@@ -42,6 +50,11 @@ class DependenciesContainer {
 
   /// [SecureStorageService] instance, used for secure storage operations
   final SecureStorageService secureStorage;
+
+  final Dio coinGeckoDio;
+  final CoinGeckoApiService coinGeckoApiService;
+  final CoinGeckoRepositoryImpl coinGeckoRepository;
+  final AuthenticateCoinGeckoUseCase coinGeckoUseCase;
 }
 
 /// {@template testing_dependencies_container}

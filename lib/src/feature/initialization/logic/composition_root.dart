@@ -11,6 +11,12 @@ import 'package:stonwallet/src/feature/initialization/model/dependencies_contain
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
 import 'package:stonwallet/src/feature/settings/data/app_settings_datasource.dart';
 import 'package:stonwallet/src/feature/settings/data/app_settings_repository.dart';
+import 'package:dio/dio.dart';
+import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
+import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/authenticate_coingecko_usecase.dart';
+import 'package:stonwallet/src/core/constant/api_keys.dart';
+import 'package:stonwallet/src/core/network/logging_interceptor.dart';
 
 /// {@template composition_root}
 /// A place where all dependencies are initialized.
@@ -115,6 +121,16 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
     final errorTrackingManager = await ErrorTrackingManagerFactory(config, logger).create();
     final settingsBloc = await SettingsBlocFactory(sharedPreferences).create();
 
+    // --- CoinGecko dependencies ---
+    final coinGeckoDio = Dio()
+      ..interceptors.add(
+        LoggingInterceptor(logger.withPrefix('[COINGECKO-API]')),
+      );
+    final coinGeckoApiService = CoinGeckoApiService(coinGeckoDio);
+    final coinGeckoRepository = CoinGeckoRepositoryImpl(coinGeckoApiService, coinGeckoApiKey);
+    final coinGeckoUseCase = AuthenticateCoinGeckoUseCase(coinGeckoRepository);
+    // ---
+
     return DependenciesContainer(
       logger: logger,
       config: config,
@@ -122,6 +138,10 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
       appSettingsBloc: settingsBloc,
       errorTrackingManager: errorTrackingManager,
       packageInfo: packageInfo,
+      coinGeckoDio: coinGeckoDio,
+      coinGeckoApiService: coinGeckoApiService,
+      coinGeckoRepository: coinGeckoRepository,
+      coinGeckoUseCase: coinGeckoUseCase,
     );
   }
 }

@@ -1,2 +1,0 @@
-Поменял иконку приложухи через dart run flutter_launcher_icons
-Добавил рефреш обертку над материалАпп, type 'Null' is not a subtype of type 'InterfaceElement' in type cast решается через flutter clean
