@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
+import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
 
 part 'coingecko_api_service.g.dart';
 
@@ -10,5 +12,23 @@ abstract class CoinGeckoApiService {
   @GET('/ping')
   Future<void> ping({
     @Header('x-cg-demo-api-key') required String apiKey,
+  });
+
+  @GET('/coins/list')
+  Future<List<CoinGeckoCoin>> getCoinsList({
+    @Header('x-cg-demo-api-key') required String apiKey,
+  });
+
+  @GET('/coins/{id}')
+  Future<CoinGeckoDetails> getCoinById({
+    @Path('id') required String id,
+    @Header('x-cg-demo-api-key') required String apiKey,
+    @Query('localization') bool localization = false,
+    @Query('tickers') bool tickers = false,
+    @Query('market_data') bool marketData = true,
+    @Query('community_data') bool communityData = false,
+    @Query('developer_data') bool developerData = false,
+    @Query('sparkline') bool sparkline = false,
+    @Query('dex_pair_format') String dexPairFormat = 'symbol',
   });
 }

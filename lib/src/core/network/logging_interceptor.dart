@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:stonwallet/src/core/utils/extensions/string_extension.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
 
 class LoggingInterceptor extends Interceptor {
@@ -23,11 +24,11 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
     final logMessage = StringBuffer()
-      ..writeln('✅ HTTP Response')
+      ..writeln('✅ HTTP Response ${response.statusCode}')
       ..writeln('URL: ${response.requestOptions.uri}')
-      ..writeln('Status Code: ${response.statusCode}')
-      ..writeln('Headers: ${response.headers}')
-      ..writeln('Response Data: ${response.data}');
+      // ..writeln('Status Code: ${response.statusCode}')
+      // ..writeln('Headers: ${response.headers}')
+      ..writeln('Response Data: ${response.data.toString().limit(1000)}');
 
     logger.info(logMessage.toString());
     super.onResponse(response, handler);
@@ -36,11 +37,11 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final logMessage = StringBuffer()
-      ..writeln('❌ HTTP Error')
+      ..writeln('❌ HTTP Error ${err.response?.statusCode}')
       ..writeln('URL: ${err.requestOptions.uri}')
-      ..writeln('Status Code: ${err.response?.statusCode}')
-      ..writeln('Error: ${err.error}')
-      ..writeln('Response Data: ${err.response?.data}');
+      // ..writeln('Status Code: ${err.response?.statusCode}')
+      // ..writeln('Error: ${err.error}')
+      ..writeln('Response Data: ${err.response?.toString().limit(1000)}');
 
     logger.error(
       logMessage.toString(),

@@ -1,12 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
+import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_auth_bloc.dart';
+import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_coins_bloc.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
+import 'package:stonwallet/src/core/utils/extensions/coingecko_details_extension.dart';
+import 'package:stonwallet/src/feature/home/view/asset_item_vm.dart';
 
 /// {@template home_screen}
 /// HomePage is a simple screen that displays a grid of items.
@@ -21,20 +28,26 @@ class HomePage extends BaseStatefulPage {
 
 class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBindingObserver {
   late final _homeLogger = DependenciesScope.of(context).logger.withPrefix('[HOME]');
+  late final CoinGeckoCoinsBloc _coinsBloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _homeLogger.info('HomePage initialized');
-    
+
     // Инициируем аутентификацию CoinGecko
     context.read<CoinGeckoAuthBloc>().add(AuthenticateCoinGeckoEvent());
+    // Инициализация и запуск загрузки монет
+    final deps = DependenciesScope.of(context);
+    _coinsBloc = CoinGeckoCoinsBloc(GetCoinDetailsUseCase(deps.coinGeckoRepository));
+    _coinsBloc.add(FetchCoinsDetailsEvent());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _coinsBloc.close();
     super.dispose();
   }
 
@@ -49,6 +62,11 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
 
   @override
   Widget buildContent(BuildContext context) {
+    final formatter = NumberFormat.currency(
+      locale: 'ru_RU',
+      symbol: '₽',
+      decimalDigits: 2,
+    );
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -193,96 +211,24 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
             ),
             SliverList(
               delegate: SliverChildListDelegate([
-                Column(
-                  children: [
-                    InkWell(
-                      child: const _AssetItem(
-                        name: 'Ethereum',
-                        value: '\$2.13',
-                        amount: '0.00112 ETH',
-                        icon: Icons.currency_bitcoin,
-                        subtitle: 'Earn 4.11% APY',
-                        subtitleColor: Colors.green,
-                      ),
-                      onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
-                    ),
-                    _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                    const _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
-                    ),
-                    const _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                    const _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
-                    ),
-                    const _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                    const _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
-                    ),
-                    const _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                    const _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
-                    ),
-                    const _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                    const _AssetItem(
-                      name: 'Ethereum',
-                      value: '\$2.13',
-                      amount: '0.00112 ETH',
-                      icon: Icons.currency_bitcoin,
-                      subtitle: 'Earn 4.11% APY',
-                      subtitleColor: Colors.green,
-                    ),
-                    const _AssetItem(
-                      name: 'MATIC',
-                      value: '\$1.00',
-                      amount: '1.11 MATIC',
-                      icon: Icons.mic,
-                    ),
-                  ],
+                BlocBuilder<CoinGeckoCoinsBloc, CoinGeckoCoinsState>(
+                  bloc: _coinsBloc,
+                  builder: (context, state) {
+                    if (state is CoinGeckoCoinsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is CoinGeckoCoinsFailure) {
+                      return Center(
+                          child: Text('Ошибка: \\${state.error}',
+                              style: TextStyle(color: Colors.red)));
+                    } else if (state is CoinGeckoCoinsLoaded) {
+                      final coins = state.coins;
+                      return Column(
+                        children:
+                            coins.map((coin) => _AssetItem(vm: coin.toAssetItemVM())).toList(),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ]),
             ),
@@ -316,41 +262,43 @@ class _WalletAction extends StatelessWidget {
 }
 
 class _AssetItem extends StatelessWidget {
-  final String name;
-  final String value;
-  final String amount;
-  final IconData icon;
-  final String? subtitle;
-  final Color? subtitleColor;
+  final AssetItemVM vm;
 
-  const _AssetItem({
-    required this.name,
-    required this.value,
-    required this.amount,
-    required this.icon,
-    this.subtitle,
-    this.subtitleColor,
-  });
+  const _AssetItem({required this.vm});
 
   @override
   Widget build(BuildContext context) {
+    final subtitleColor =
+        (vm.priceChangePercentage24h ?? '').startsWith('-') ? Colors.red : Colors.green;
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.grey[800],
-        child: Icon(icon, color: Colors.white),
+        radius: 24,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: vm.iconURL ?? 'https://example.com/icon.png',
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+        ),
       ),
-      title: Text(name, style: const TextStyle(color: Colors.white)),
-      subtitle: subtitle != null
-          ? Text(subtitle!, style: TextStyle(color: subtitleColor ?? Colors.white54))
-          : Text(amount, style: const TextStyle(color: Colors.white54)),
+      title: Text(vm.name, style: const TextStyle(color: Colors.white)),
+      subtitle: Row(
+        children: [
+          Text(vm.price, style: const TextStyle(color: Colors.white54)),
+          const SizedBox(width: 8),
+          Text(vm.priceChangePercentage24h ?? '', style: TextStyle(color: subtitleColor)),
+        ],
+      ),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(value, style: const TextStyle(color: Colors.white)),
-          if (subtitle == null) Text(amount, style: const TextStyle(color: Colors.white54)),
+          Text(vm.value, style: const TextStyle(color: Colors.white)),
+          Text(vm.amount, style: const TextStyle(color: Colors.white54)),
         ],
       ),
+      onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
     );
   }
 }

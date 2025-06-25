@@ -1,6 +1,7 @@
 # User instructions
 
 Do NOT delete any debug prints or logger calls.
+DO NOT use fvm in commands.
 
 # CoinGecko API Documentation Documentation
 
