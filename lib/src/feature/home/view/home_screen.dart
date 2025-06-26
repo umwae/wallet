@@ -4,16 +4,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:stonwallet/src/core/utils/extensions/coingecko_details_extension.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
-import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
-import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
-import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
-import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/get_ton_wallet_balance_usecase.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/open_ton_wallet_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_auth_bloc.dart';
 import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_coins_bloc.dart';
-import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
-import 'package:stonwallet/src/core/utils/extensions/coingecko_details_extension.dart';
+import 'package:stonwallet/src/feature/home/cubit/ton_wallet_balance_cubit.dart';
 import 'package:stonwallet/src/feature/home/view/asset_item_vm.dart';
+import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
 /// {@template home_screen}
 /// HomePage is a simple screen that displays a grid of items.
@@ -29,6 +30,7 @@ class HomePage extends BaseStatefulPage {
 class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBindingObserver {
   late final _homeLogger = DependenciesScope.of(context).logger.withPrefix('[HOME]');
   late final CoinGeckoCoinsBloc _coinsBloc;
+  late final TonWalletBalanceCubit _tonBalanceCubit;
 
   @override
   void initState() {
@@ -37,17 +39,30 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
     _homeLogger.info('HomePage initialized');
 
     // Инициируем аутентификацию CoinGecko
-    context.read<CoinGeckoAuthBloc>().add(AuthenticateCoinGeckoEvent());
+    context.read<CoinGeckoAuthBloc>().add(PingCoinGeckoEvent());
     // Инициализация и запуск загрузки монет
     final deps = DependenciesScope.of(context);
     _coinsBloc = CoinGeckoCoinsBloc(GetCoinDetailsUseCase(deps.coinGeckoRepository));
     _coinsBloc.add(FetchCoinsDetailsEvent());
+    // Инициализация и запуск загрузки баланса
+    _tonBalanceCubit = TonWalletBalanceCubit(
+      loadBalance: () async {
+        final openedWallet = await OpenTonWalletUseCase(
+          secureStorage: deps.secureStorage,
+        ).call();
+        return await GetTonWalletBalanceUseCase(
+          logger: deps.logger,
+        ).call(openedWallet);
+      },
+    );
+    _tonBalanceCubit.fetchBalance();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _coinsBloc.close();
+    _tonBalanceCubit.close();
     super.dispose();
   }
 
@@ -124,12 +139,24 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                     ],
                                   ),
                                   const SizedBox(height: 20),
-                                  const Text(
-                                    '\$3.13',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold),
+                                  BlocBuilder<TonWalletBalanceCubit, TonWalletBalanceState>(
+                                    bloc: _tonBalanceCubit,
+                                    builder: (context, state) {
+                                      String balanceText;
+                                      if (state is TonWalletBalanceLoaded) {
+                                        balanceText = state.balance.toString();
+                                      } else {
+                                        balanceText = '';
+                                      }
+                                      return Text(
+                                        balanceText,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    },
                                   ),
                                   const SizedBox(height: 20),
                                   Row(

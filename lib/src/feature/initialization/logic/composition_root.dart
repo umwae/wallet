@@ -1,22 +1,22 @@
 import 'package:clock/clock.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stonwallet/src/core/constant/api_keys.dart';
 import 'package:stonwallet/src/core/constant/config.dart';
+import 'package:stonwallet/src/core/network/logging_interceptor.dart';
 import 'package:stonwallet/src/core/service/secure_storage_service.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/error_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/error_tracking_manager/sentry_tracking_manager.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
+import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
+import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 import 'package:stonwallet/src/feature/initialization/model/dependencies_container.dart';
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
 import 'package:stonwallet/src/feature/settings/data/app_settings_datasource.dart';
 import 'package:stonwallet/src/feature/settings/data/app_settings_repository.dart';
-import 'package:dio/dio.dart';
-import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
-import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
-import 'package:stonwallet/src/feature/crypto/domain/usecases/authenticate_coingecko_usecase.dart';
-import 'package:stonwallet/src/core/constant/api_keys.dart';
-import 'package:stonwallet/src/core/network/logging_interceptor.dart';
 
 /// {@template composition_root}
 /// A place where all dependencies are initialized.
@@ -128,7 +128,7 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
       );
     final coinGeckoApiService = CoinGeckoApiService(coinGeckoDio);
     final coinGeckoRepository = CoinGeckoRepositoryImpl(coinGeckoApiService, coinGeckoApiKey);
-    final coinGeckoUseCase = AuthenticateCoinGeckoUseCase(coinGeckoRepository);
+    final coinGeckoUseCase = PingCoinGeckoUseCase(coinGeckoRepository);
     // ---
 
     return DependenciesContainer(

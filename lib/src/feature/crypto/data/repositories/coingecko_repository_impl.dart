@@ -1,8 +1,7 @@
+import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
+import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
-
-import '../../domain/repositories/coingecko_repository.dart';
-import '../datasources/coingecko_api_service.dart';
-import '../models/coingecko_coin.dart';
+import 'package:stonwallet/src/feature/crypto/domain/repositories/coingecko_repository.dart';
 
 class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   final CoinGeckoApiService _apiService;
@@ -11,7 +10,7 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   CoinGeckoRepositoryImpl(this._apiService, this._apiKey);
 
   @override
-  Future<void> authenticate() async {
+  Future<void> ping() async {
     try {
       await _apiService.ping(apiKey: _apiKey);
     } catch (e) {

@@ -76,6 +76,7 @@ dependencies:
   fl_chart: ^1.0.0
   freezed: ^2.5.7
   cached_network_image: ^3.4.1
+  tonutils: ^0.5.7
 
 dev_dependencies:
   bloc_test: ^10.0.0

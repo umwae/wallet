@@ -6,7 +6,7 @@ import 'package:stonwallet/src/core/utils/error_tracking_manager/error_tracking_
 import 'package:stonwallet/src/core/utils/logger.dart';
 import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
 import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
-import 'package:stonwallet/src/feature/crypto/domain/usecases/authenticate_coingecko_usecase.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
 
@@ -54,7 +54,7 @@ class DependenciesContainer {
   final Dio coinGeckoDio;
   final CoinGeckoApiService coinGeckoApiService;
   final CoinGeckoRepositoryImpl coinGeckoRepository;
-  final AuthenticateCoinGeckoUseCase coinGeckoUseCase;
+  final PingCoinGeckoUseCase coinGeckoUseCase;
 }
 
 /// {@template testing_dependencies_container}

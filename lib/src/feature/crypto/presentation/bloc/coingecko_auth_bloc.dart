@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/usecases/authenticate_coingecko_usecase.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 
 // Events
 abstract class CoinGeckoAuthEvent {}
 
-class AuthenticateCoinGeckoEvent extends CoinGeckoAuthEvent {}
+class PingCoinGeckoEvent extends CoinGeckoAuthEvent {}
 
 // States
 abstract class CoinGeckoAuthState {}
@@ -23,15 +22,15 @@ class CoinGeckoAuthFailure extends CoinGeckoAuthState {
 }
 
 class CoinGeckoAuthBloc extends Bloc<CoinGeckoAuthEvent, CoinGeckoAuthState> {
-  final AuthenticateCoinGeckoUseCase _authenticateUseCase;
+  final PingCoinGeckoUseCase _authenticateUseCase;
 
   CoinGeckoAuthBloc(this._authenticateUseCase) : super(CoinGeckoAuthInitial()) {
-    on<AuthenticateCoinGeckoEvent>(_onAuthenticate); //Регистрируем обработчик событий
-    //Когда в блок поступит событие AuthenticateCoinGeckoEvent, будет вызван метод _onAuthenticate для обработки этого события
+    on<PingCoinGeckoEvent>(_onAuthenticate); //Регистрируем обработчик событий
+    //Когда в блок поступит событие PingCoinGeckoEvent, будет вызван метод _onAuthenticate для обработки этого события
   }
 
   Future<void> _onAuthenticate(
-    AuthenticateCoinGeckoEvent event,
+    PingCoinGeckoEvent event,
     Emitter<CoinGeckoAuthState> emit,
   ) async {
     emit(CoinGeckoAuthLoading());
