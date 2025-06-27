@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'coingecko_details.freezed.dart';
@@ -25,7 +27,8 @@ class MarketData with _$MarketData {
     @JsonKey(name: 'market_cap') required Map<String, double> marketCap,
     @JsonKey(name: 'total_volume') required Map<String, double> totalVolume,
     @JsonKey(name: 'price_change_24h_in_currency') Map<String, double>? priceChange24hInCurrency,
-    @JsonKey(name: 'price_change_percentage_24h_in_currency') Map<String, double>? priceChangePercentage24hInCurrency,
+    @JsonKey(name: 'price_change_percentage_24h_in_currency')
+    Map<String, double>? priceChangePercentage24hInCurrency,
   }) = _MarketData;
 
   factory MarketData.fromJson(Map<String, dynamic> json) => _$MarketDataFromJson(json);

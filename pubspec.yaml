@@ -77,12 +77,12 @@ dependencies:
   freezed: ^2.5.7
   cached_network_image: ^3.4.1
   tonutils: ^0.5.7
+  freezed_annotation: ^2.4.4
 
 dev_dependencies:
   bloc_test: ^10.0.0
   integration_test:
     sdk: flutter
-  json_serializable: ^6.3.1
   # Testing
   mockito: ^5.4.4
 
@@ -96,7 +96,6 @@ dev_dependencies:
 
   # Codegen
   # drift_dev: ^2.21.2
-  build_runner: ^2.4.13
 
 flutter:
   uses-material-design: true

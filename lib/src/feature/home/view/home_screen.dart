@@ -4,15 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:stonwallet/src/core/utils/extensions/coingecko_details_extension.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_ton_wallet_balance_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/open_ton_wallet_usecase.dart';
-import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_auth_bloc.dart';
-import 'package:stonwallet/src/feature/crypto/presentation/bloc/coingecko_coins_bloc.dart';
-import 'package:stonwallet/src/feature/home/cubit/ton_wallet_balance_cubit.dart';
-import 'package:stonwallet/src/feature/home/view/asset_item_vm.dart';
+import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
+import 'package:stonwallet/src/feature/home/bloc/wallet_loaded_extension.dart';
+import 'package:stonwallet/src/feature/home/view/wallet_vm.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
@@ -29,8 +27,7 @@ class HomePage extends BaseStatefulPage {
 
 class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBindingObserver {
   late final _homeLogger = DependenciesScope.of(context).logger.withPrefix('[HOME]');
-  late final CoinGeckoCoinsBloc _coinsBloc;
-  late final TonWalletBalanceCubit _tonBalanceCubit;
+  late final WalletBloc _walletBloc;
 
   @override
   void initState() {
@@ -38,31 +35,24 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
     WidgetsBinding.instance.addObserver(this);
     _homeLogger.info('HomePage initialized');
 
-    // Инициируем аутентификацию CoinGecko
-    context.read<CoinGeckoAuthBloc>().add(PingCoinGeckoEvent());
-    // Инициализация и запуск загрузки монет
     final deps = DependenciesScope.of(context);
-    _coinsBloc = CoinGeckoCoinsBloc(GetCoinDetailsUseCase(deps.coinGeckoRepository));
-    _coinsBloc.add(FetchCoinsDetailsEvent());
-    // Инициализация и запуск загрузки баланса
-    _tonBalanceCubit = TonWalletBalanceCubit(
-      loadBalance: () async {
-        final openedWallet = await OpenTonWalletUseCase(
-          secureStorage: deps.secureStorage,
-        ).call();
-        return await GetTonWalletBalanceUseCase(
-          logger: deps.logger,
-        ).call(openedWallet);
-      },
+    _walletBloc = WalletBloc(
+      getCoinDetails: GetCoinDetailsUseCase(deps.coinGeckoRepository),
+      getTonWalletBalance: GetTonWalletBalanceUseCase(logger: deps.logger),
+      openTonWallet: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
     );
-    _tonBalanceCubit.fetchBalance();
+    onRefresh();
+  }
+
+  @override //Загрузка монет и баланса
+  Future<void> onRefresh() async {
+    _walletBloc.add(WalletLoadDataEvent());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _coinsBloc.close();
-    _tonBalanceCubit.close();
+    _walletBloc.close();
     super.dispose();
   }
 
@@ -77,7 +67,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
 
   @override
   Widget buildContent(BuildContext context) {
-    final formatter = NumberFormat.currency(
+    final rubFormatter = NumberFormat.currency(
       locale: 'ru_RU',
       symbol: '₽',
       decimalDigits: 2,
@@ -139,15 +129,15 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                     ],
                                   ),
                                   const SizedBox(height: 20),
-                                  BlocBuilder<TonWalletBalanceCubit, TonWalletBalanceState>(
-                                    bloc: _tonBalanceCubit,
+                                  BlocBuilder<WalletBloc, WalletState>(
+                                    bloc: _walletBloc,
                                     builder: (context, state) {
-                                      String balanceText;
-                                      if (state is TonWalletBalanceLoaded) {
-                                        balanceText = state.balance.toString();
-                                      } else {
-                                        balanceText = '';
-                                      }
+                                      final balanceText = switch (state) {
+                                        WalletLoaded() => state
+                                            .toWalletEntity(formatter: rubFormatter)
+                                            .convertedTotalBalance,
+                                        _ => '',
+                                      };
                                       return Text(
                                         balanceText,
                                         style: TextStyle(
@@ -192,7 +182,9 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                             TextSpan(
                                               text: 'Earn \$30 in crypto\n',
                                               style: TextStyle(
-                                                  color: Colors.white, fontWeight: FontWeight.bold),
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                               children: [
                                                 TextSpan(
                                                   text: 'Learn and earn rewards with quests.',
@@ -209,9 +201,13 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                   const SizedBox(height: 24),
                                   const Row(
                                     children: [
-                                      Text('Crypto',
-                                          style: TextStyle(
-                                              color: Colors.white, fontWeight: FontWeight.bold)),
+                                      Text(
+                                        'Crypto',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                       SizedBox(width: 12),
                                       Text('NFTs', style: TextStyle(color: Colors.white54)),
                                       SizedBox(width: 12),
@@ -238,20 +234,22 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
             ),
             SliverList(
               delegate: SliverChildListDelegate([
-                BlocBuilder<CoinGeckoCoinsBloc, CoinGeckoCoinsState>(
-                  bloc: _coinsBloc,
+                BlocBuilder<WalletBloc, WalletState>(
+                  bloc: _walletBloc,
                   builder: (context, state) {
-                    if (state is CoinGeckoCoinsLoading) {
+                    if (state is WalletLoading) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is CoinGeckoCoinsFailure) {
+                    } else if (state is WalletFailure) {
                       return Center(
-                          child: Text('Ошибка: \\${state.error}',
-                              style: TextStyle(color: Colors.red)));
-                    } else if (state is CoinGeckoCoinsLoaded) {
-                      final coins = state.coins;
+                        child: Text(
+                          'Ошибка: ${state.error}',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      );
+                    } else if (state is WalletLoaded) {
+                      final coinEntitys = state.toWalletEntity(formatter: rubFormatter).assets;
                       return Column(
-                        children:
-                            coins.map((coin) => _AssetItem(vm: coin.toAssetItemVM())).toList(),
+                        children: coinEntitys.map((c) => _AssetItem(coinEntity: c)).toList(),
                       );
                     }
                     return const SizedBox.shrink();
@@ -282,47 +280,48 @@ class _WalletAction extends StatelessWidget {
           child: Icon(icon, color: Colors.white),
         ),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(color: Colors.white))
+        Text(label, style: const TextStyle(color: Colors.white)),
       ],
     );
   }
 }
 
 class _AssetItem extends StatelessWidget {
-  final AssetItemVM vm;
+  final CoinEntity coinEntity;
 
-  const _AssetItem({required this.vm});
+  const _AssetItem({required this.coinEntity});
 
   @override
   Widget build(BuildContext context) {
-    final subtitleColor =
-        (vm.priceChangePercentage24h ?? '').startsWith('-') ? Colors.red : Colors.green;
     return ListTile(
       leading: CircleAvatar(
         radius: 24,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: ClipOval(
           child: CachedNetworkImage(
-            imageUrl: vm.iconURL ?? 'https://example.com/icon.png',
+            imageUrl: coinEntity.iconURL ?? 'https://example.com/icon.png',
             placeholder: (context, url) => CircularProgressIndicator(),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
         ),
       ),
-      title: Text(vm.name, style: const TextStyle(color: Colors.white)),
+      title: Text(coinEntity.name, style: const TextStyle(color: Colors.white)),
       subtitle: Row(
         children: [
-          Text(vm.price, style: const TextStyle(color: Colors.white54)),
+          Text(coinEntity.priceFormatted, style: const TextStyle(color: Colors.white54)),
           const SizedBox(width: 8),
-          Text(vm.priceChangePercentage24h ?? '', style: TextStyle(color: subtitleColor)),
+          Text(
+            coinEntity.priceChangePercentage24h ?? '',
+            style: TextStyle(color: coinEntity.earningsColor),
+          ),
         ],
       ),
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(vm.value, style: const TextStyle(color: Colors.white)),
-          Text(vm.amount, style: const TextStyle(color: Colors.white54)),
+          Text(coinEntity.coinBalanceConverted, style: const TextStyle(color: Colors.white)),
+          Text(coinEntity.coinBalance, style: const TextStyle(color: Colors.white54)),
         ],
       ),
       onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),

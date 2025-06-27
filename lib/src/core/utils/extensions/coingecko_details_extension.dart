@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart' show Colors;
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
-import 'package:stonwallet/src/feature/home/view/asset_item_vm.dart';
+import 'package:stonwallet/src/feature/home/view/wallet_vm.dart';
 
 extension CoinGeckoDetailsX on CoinGeckoDetails {
   String get displayName => name;
@@ -15,7 +16,7 @@ extension CoinGeckoDetailsX on CoinGeckoDetails {
 
   String priceInRubValue() {
     final price = marketData.currentPrice['rub'];
-    return price?.toStringAsFixed(2) ?? '-';
+    return price?.toStringAsFixed(2) ?? '';
   }
 
   String priceChangePercentage24hRub() {
@@ -24,14 +25,18 @@ extension CoinGeckoDetailsX on CoinGeckoDetails {
     return '$sign${value.toStringAsFixed(2)}%';
   }
 
-  AssetItemVM toAssetItemVM() {
-    return AssetItemVM(
-      name: displayName,
-      value: priceInRubValue(),
-      amount: '1.00 $displaySymbol',
-      price: priceInRubFormatted(),
-      iconURL: iconUrl,
-      priceChangePercentage24h: priceChangePercentage24hRub(),
-    );
+  CoinEntity toCoinEntity() {
+    return CoinEntity(
+        id: id,
+        name: displayName,
+        price: marketData.currentPrice['rub'].toString(),
+        priceTrunc: priceInRubValue(),
+        symbol: displaySymbol,
+        priceFormatted: priceInRubFormatted(),
+        iconURL: iconUrl,
+        priceChangePercentage24h: priceChangePercentage24hRub(),
+        coinBalance: 0.toString(),
+        coinBalanceConverted: 0.toString(),
+        earningsColor: Colors.transparent);
   }
 }
