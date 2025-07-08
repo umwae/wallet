@@ -15,7 +15,7 @@ import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
 /// {@template home_screen}
-/// HomePage is a simple screen that displays a grid of items.
+/// The main screen of the application.
 /// {@endtemplate}
 class HomePage extends BaseStatefulPage {
   /// {@macro home_screen}
@@ -67,25 +67,27 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
 
   @override
   Widget buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final rubFormatter = NumberFormat.currency(
       locale: 'ru_RU',
       symbol: '₽',
       decimalDigits: 2,
     );
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverAppBar(
-              backgroundColor: Colors.black,
+              backgroundColor: colorScheme.surface,
               pinned: true,
               floating: false,
               snap: false,
               toolbarHeight: 0,
-              collapsedHeight: 450,
-              expandedHeight: 450,
+              collapsedHeight: 420,
+              expandedHeight: 420,
               stretch: false,
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
@@ -94,38 +96,52 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                     background: SingleChildScrollView(
                       physics: const NeverScrollableScrollPhysics(),
                       child: Container(
-                        height: 450,
-                        color: Colors.black,
+                        height: 420,
+                        color: colorScheme.surface,
                         child: Column(
                           children: [
                             const SizedBox(height: 12),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     children: [
-                                      InkWell(
-                                        child: const CircleAvatar(
-                                          backgroundColor: Colors.green,
-                                          child: Icon(Icons.lock, color: Colors.white),
-                                        ),
-                                        onTap: () =>
+                                      IconButton.filled(
+                                        onPressed: () =>
                                             AppNavigator.push(context, Routes.counter.page()),
+                                        icon: const Icon(Icons.lock),
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: colorScheme.primary,
+                                          foregroundColor: colorScheme.onPrimary,
+                                        ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           'testaccount',
-                                          style: TextStyle(color: Colors.white),
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            color: colorScheme.onSurface,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
-                                      Icon(Icons.copy, color: Colors.white),
-                                      SizedBox(width: 12),
-                                      Icon(Icons.qr_code, color: Colors.white),
-                                      SizedBox(width: 12),
-                                      Icon(Icons.notifications_none, color: Colors.white),
+                                      IconButton(
+                                        icon: const Icon(Icons.copy),
+                                        color: colorScheme.onSurfaceVariant,
+                                        onPressed: () {},
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.qr_code),
+                                        color: colorScheme.onSurfaceVariant,
+                                        onPressed: () {},
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.notifications_none),
+                                        color: colorScheme.onSurfaceVariant,
+                                        onPressed: () {},
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 20),
@@ -140,9 +156,8 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                       };
                                       return Text(
                                         balanceText,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 28,
+                                        style: theme.textTheme.displaySmall?.copyWith(
+                                          color: colorScheme.onSurface,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       );
@@ -150,13 +165,23 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                   ),
                                   const SizedBox(height: 20),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: const [
-                                      _WalletAction(icon: Icons.add, label: 'Buy'),
-                                      _WalletAction(icon: Icons.swap_horiz, label: 'Swap'),
-                                      _WalletAction(icon: Icons.hub, label: 'Bridge'),
-                                      _WalletAction(icon: Icons.arrow_upward, label: 'Send'),
-                                      _WalletAction(icon: Icons.arrow_downward, label: 'Receive'),
+                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // _WalletAction(icon: Icons.add, label: 'Buy'),
+                                      // _WalletAction(icon: Icons.swap_horiz, label: 'Swap'),
+                                      // _WalletAction(icon: Icons.hub, label: 'Bridge'),
+                                      Expanded(
+                                        child: _WalletAction(
+                                          icon: Icons.arrow_upward,
+                                          label: 'Send',
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: _WalletAction(
+                                          icon: Icons.arrow_downward,
+                                          label: 'Receive',
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -164,55 +189,68 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                             ),
                             const SizedBox(height: 24),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[900],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      children: const [
-                                        Icon(Icons.emoji_events, color: Colors.white),
-                                        SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text.rich(
-                                            TextSpan(
-                                              text: 'Earn \$30 in crypto\n',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              children: [
-                                                TextSpan(
-                                                  text: 'Learn and earn rewards with quests.',
-                                                  style: TextStyle(fontWeight: FontWeight.normal),
-                                                ),
-                                              ],
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Card(
+                                color: colorScheme.secondaryContainer,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.emoji_events, color: colorScheme.primary),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            text: 'Earn \$30 in crypto\n',
+                                            style: theme.textTheme.titleMedium?.copyWith(
+                                              color: colorScheme.onSecondaryContainer,
+                                              fontWeight: FontWeight.bold,
                                             ),
+                                            children: [
+                                              TextSpan(
+                                                text: 'Learn and earn rewards with quests.',
+                                                style: theme.textTheme.bodyMedium?.copyWith(
+                                                  fontWeight: FontWeight.normal,
+                                                  color: colorScheme.onSecondaryContainer,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Icon(Icons.close, color: Colors.white54),
-                                      ],
+                                      ),
+                                      Icon(Icons.close, color: colorScheme.onSurfaceVariant),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Crypto',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      color: colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 24),
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'Crypto',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12),
-                                      Text('NFTs', style: TextStyle(color: Colors.white54)),
-                                      SizedBox(width: 12),
-                                      Text('DeFi', style: TextStyle(color: Colors.white54)),
-                                    ],
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'NFTs',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(color: colorScheme.onSurfaceVariant),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'DeFi',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(color: colorScheme.onSurfaceVariant),
                                   ),
                                 ],
                               ),
@@ -228,7 +266,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
             ),
             SliverToBoxAdapter(
               child: Container(
-                color: Colors.black,
+                color: colorScheme.surface,
                 height: 16,
               ),
             ),
@@ -243,13 +281,17 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                       return Center(
                         child: Text(
                           'Ошибка: ${state.error}',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: colorScheme.error),
                         ),
                       );
                     } else if (state is WalletLoaded) {
                       final coinEntitys = state.toWalletEntity(formatter: rubFormatter).assets;
                       return Column(
-                        children: coinEntitys.map((c) => _AssetItem(coinEntity: c)).toList(),
+                        children: [
+                          ...coinEntitys.map((c) => _AssetItem(coinEntity: c)).toList(),
+                          // _AssetItem(coinEntity: coinEntitys.last),
+                          // _AssetItem(coinEntity: coinEntitys.last)
+                        ],
                       );
                     }
                     return const SizedBox.shrink();
@@ -272,16 +314,31 @@ class _WalletAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: Colors.blue[700],
-          child: Icon(icon, color: Colors.white),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(color: Colors.white)),
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Column(
+        children: [
+          FilledButton(
+            onPressed: () {},
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                // side: BorderSide(width: 5, color: colorScheme.onSurfaceVariant),
+              ),
+              backgroundColor: colorScheme.primaryContainer,
+              foregroundColor: colorScheme.onPrimaryContainer,
+              // padding: const EdgeInsets.all(16),
+              iconColor: colorScheme.onPrimaryContainer,
+              surfaceTintColor: colorScheme.tertiaryContainer,
+              elevation: 3,
+            ),
+            child: Icon(icon),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+        ],
+      ),
     );
   }
 }
@@ -293,38 +350,58 @@ class _AssetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 24,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: coinEntity.iconURL ?? 'https://example.com/icon.png',
-            placeholder: (context, url) => CircularProgressIndicator(),
-            errorWidget: (context, url, error) => Icon(Icons.error),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    return Card(
+      color: colorScheme.surfaceVariant,
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 24,
+          backgroundColor: colorScheme.primaryContainer,
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: coinEntity.iconURL ?? 'https://example.com/icon.png',
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
         ),
+        title: Text(
+          coinEntity.name,
+          style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+        ),
+        subtitle: Row(
+          children: [
+            Text(
+              coinEntity.priceFormatted,
+              style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              coinEntity.priceChangePercentage24h ?? '',
+              style: theme.textTheme.bodyMedium?.copyWith(color: coinEntity.earningsColor),
+            ),
+          ],
+        ),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              coinEntity.coinBalanceConverted,
+              style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+            ),
+            Text(
+              coinEntity.coinBalance,
+              style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+          ],
+        ),
+        onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
       ),
-      title: Text(coinEntity.name, style: const TextStyle(color: Colors.white)),
-      subtitle: Row(
-        children: [
-          Text(coinEntity.priceFormatted, style: const TextStyle(color: Colors.white54)),
-          const SizedBox(width: 8),
-          Text(
-            coinEntity.priceChangePercentage24h ?? '',
-            style: TextStyle(color: coinEntity.earningsColor),
-          ),
-        ],
-      ),
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(coinEntity.coinBalanceConverted, style: const TextStyle(color: Colors.white)),
-          Text(coinEntity.coinBalance, style: const TextStyle(color: Colors.white54)),
-        ],
-      ),
-      onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
     );
   }
 }
