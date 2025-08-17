@@ -377,7 +377,7 @@ class _AssetItem extends StatelessWidget {
           children: [
             Text(
               coinEntity.priceFormatted,
-              style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
             ),
             const SizedBox(width: 8),
             Text(
@@ -396,7 +396,7 @@ class _AssetItem extends StatelessWidget {
             ),
             Text(
               coinEntity.coinBalance,
-              style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ],
         ),

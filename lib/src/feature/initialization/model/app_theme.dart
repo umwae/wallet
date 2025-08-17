@@ -10,8 +10,13 @@ final class AppTheme with Diagnosticable {
   /// {@macro app_theme}
   AppTheme({required this.themeMode, required this.seed})
       : darkTheme = ThemeData(
-          colorSchemeSeed: seed,
-          brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: seed,
+            brightness: Brightness.dark,
+          ).copyWith(
+            onSurfaceVariant: const Color.fromARGB(255, 132, 132, 132),
+            // onSurfaceVariant: const Color.fromARGB(255, 144, 164, 194),
+          ),
           useMaterial3: true,
         ),
         lightTheme = ThemeData(

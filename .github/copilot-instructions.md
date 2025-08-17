@@ -2,6 +2,7 @@
 
 Do NOT delete any debug prints or logger calls.
 DO NOT use fvm in commands.
+Для GPT ассистентов: НЕ задавать дополнительные вопросы (вроде "Если не знаете, где это находится, скажите — я помогу найти!"), а сразу ПЫТАТЬСЯ ВЫПОЛНИТЬ ЗАДАНИЕ.
 
 # CoinGecko API Documentation Documentation
 
