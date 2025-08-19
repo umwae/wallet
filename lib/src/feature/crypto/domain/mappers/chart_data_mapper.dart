@@ -9,9 +9,9 @@ extension ChartDataMapper on CoinGeckoMarketChartRange {
     final minPrice = pricesExtracted.reduce((a, b) => a < b ? a : b).toDouble();
     final maxPrice = pricesExtracted.reduce((a, b) => a > b ? a : b).toDouble();
     final startingDate = DateTime.fromMillisecondsSinceEpoch(pricesData.first[0] as int);
-    final endDate = DateTime.fromMillisecondsSinceEpoch(pricesData.last[0] as int)
-        .difference(startingDate)
-        .inDays;
+    final endDateRaw =
+        DateTime.fromMillisecondsSinceEpoch(pricesData.last[0] as int).difference(startingDate);
+    final endDate = endDateRaw.inMilliseconds / Duration.millisecondsPerDay;
     //Даты в промежутке от 0 до последней даты в днях. Цены в промежутке от наименьшей до наибольшей.
     final spotsNormalized = pricesData.map(
       (List<num> p) {

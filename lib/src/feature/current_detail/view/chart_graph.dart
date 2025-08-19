@@ -52,19 +52,11 @@ class _LineChartSample2State extends State<LineChartSample2> {
                   children: <Widget>[
                     AspectRatio(
                       aspectRatio: 1.70,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          right: 0,
-                          left: 0,
-                          top: 0,
-                          bottom: 12,
-                        ),
-                        child: chartWidget,
-                      ),
+                      child: chartWidget,
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -72,7 +64,6 @@ class _LineChartSample2State extends State<LineChartSample2> {
                     _PeriodTab(title: '7Д', index: 1, selectedIndex: state),
                     _PeriodTab(title: '1М', index: 2, selectedIndex: state),
                     _PeriodTab(title: '1Г', index: 3, selectedIndex: state),
-                    _PeriodTab(title: 'Все', index: 4, selectedIndex: state),
                   ],
                 ),
               ],
@@ -197,11 +188,11 @@ class _PeriodTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selected = (index == selectedIndex);
-    return Container(
+    return DecoratedBox(
       // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: selected ? Colors.white24 : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: TextButton(
         style: TextButton.styleFrom(

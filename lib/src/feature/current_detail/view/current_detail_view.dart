@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_scope.dart';
+import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
 
 class CurrentDetailView extends StatelessWidget {
   const CurrentDetailView({super.key});
@@ -57,14 +59,19 @@ class CurrentDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          ChartGraphScope(
-            id: 'the-open-network',
-            vsCurrency: 'rub',
-            from: '2025-08-01',
-            to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            // interval: 'daily',
+          BlocBuilder<CurrentDetailCubit, int>(
+            builder: (context, periodIndex) {
+              return ChartGraphScope(
+                key: ValueKey(periodIndex),
+                id: 'the-open-network',
+                vsCurrency: 'rub',
+                from: _getFromByPeriod(periodIndex),
+                to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                // interval: 'daily',
+              );
+            },
           ),
-
+          const SizedBox(height: 16),
           // Баланс TON
           Container(
             padding: const EdgeInsets.all(16),
@@ -98,45 +105,6 @@ class CurrentDetailView extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(height: 24),
-
-          // Бонусы
-          // Container(
-          //   padding: const EdgeInsets.all(16),
-          //   decoration: BoxDecoration(
-          //     color: const Color(0xFF1A2E40),
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   child: const Row(
-          //     children: [
-          //       Icon(Icons.savings, color: Colors.greenAccent),
-          //       SizedBox(width: 12),
-          //       Expanded(
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             Text(
-          //               'Бонусы в TON',
-          //               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          //             ),
-          //             SizedBox(height: 4),
-          //             Row(
-          //               children: [
-          //                 Text('4.1% годовых', style: TextStyle(color: Colors.lightBlueAccent)),
-          //                 SizedBox(width: 4),
-          //                 Text(
-          //                   '— Внесите токены на счёт и зарабатывайте',
-          //                   style: TextStyle(color: Colors.white70),
-          //                 ),
-          //               ],
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
 
           const SizedBox(height: 24),
 
@@ -174,26 +142,18 @@ class CurrentDetailView extends StatelessWidget {
   }
 }
 
-// class _PeriodTab extends StatelessWidget {
-//   final String title;
-//   final int index;
-//   final bool selected;
-
-//   const _PeriodTab({required this.title, required this.index, this.selected = false});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-//       decoration: BoxDecoration(
-//         color: selected ? Colors.white24 : Colors.transparent,
-//         borderRadius: BorderRadius.circular(20),
-//       ),
-//       child: FloatingActionButton(
-//             key: const Key('counterView_increment_floatingActionButton'),
-//             child: Text(title, style: TextStyle(color: selected ? Colors.white : Colors.white54)),
-//             onPressed: () => context.read<CurrentDetailCubit>().changePeriod(index),
-//           ),
-//     );
-//   }
-// }
+String _getFromByPeriod(int periodIndex) {
+  final now = DateTime.now();
+  switch (periodIndex) {
+    case 0:
+      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 1)));
+    case 1:
+      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 7)));
+    case 2:
+      return DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
+    case 3:
+      return DateFormat('yyyy-MM-dd').format(DateTime(now.year - 1, now.month, now.day));
+    default:
+      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 1)));
+  }
+}
