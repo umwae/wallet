@@ -37,9 +37,9 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
 
     final deps = DependenciesScope.of(context);
     _walletBloc = WalletBloc(
-      getCoinDetails: GetCoinDetailsUseCase(deps.coinGeckoRepository),
-      getTonWalletBalance: GetTonWalletBalanceUseCase(logger: deps.logger),
-      openTonWallet: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
+      getCoinDetailsUseCase: GetCoinDetailsUseCase(deps.coinGeckoRepository),
+      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(logger: deps.logger),
+      openTonWalletUseCase: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
     );
     onRefresh();
   }

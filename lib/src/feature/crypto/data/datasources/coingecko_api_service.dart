@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
+import 'package:stonwallet/src/feature/crypto/data/models/coingecko_market_chart_range.dart';
 
 part 'coingecko_api_service.g.dart';
 
@@ -31,4 +32,16 @@ abstract class CoinGeckoApiService {
     @Query('sparkline') bool sparkline = false,
     @Query('dex_pair_format') String dexPairFormat = 'symbol',
   });
+
+  @GET('/coins/{id}/market_chart/range')
+  Future<CoinGeckoMarketChartRange> getMarketChartRange({
+    @Path('id') required String id,
+    @Header('x-cg-demo-api-key') required String apiKey,
+    @Query('vs_currency') required String vsCurrency,
+    @Query('from') required String from,
+    @Query('to') required String to,
+    @Query('precision') String? precision,
+    @Query('interval') String? interval,
+  });
+
 }

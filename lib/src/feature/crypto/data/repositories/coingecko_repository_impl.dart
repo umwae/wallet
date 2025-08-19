@@ -1,6 +1,8 @@
 import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
+import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/crypto/domain/mappers/chart_data_mapper.dart';
 import 'package:stonwallet/src/feature/crypto/domain/repositories/coingecko_repository.dart';
 
 class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
@@ -33,6 +35,30 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
       return await _apiService.getCoinById(id: id, apiKey: _apiKey);
     } catch (e) {
       throw Exception('Failed to fetch coin details: $e');
+    }
+  }
+
+  @override
+  Future<ChartDataEntity> getMarketChartRange(
+    String id,
+    String vsCurrency,
+    String from,
+    String to,
+    String? interval,
+  ) async {
+    try {
+      return (await _apiService.getMarketChartRange(
+        id: id,
+        vsCurrency: vsCurrency,
+        from: from,
+        to: to,
+        apiKey: _apiKey,
+        precision: 'full',
+        interval: interval,
+      ))
+          .toChartPoints();
+    } catch (e) {
+      throw Exception('Failed to fetch coin history chart: $e');
     }
   }
 }

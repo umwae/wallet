@@ -32,17 +32,17 @@ class WalletLoaded extends WalletState {
 }
 
 class WalletBloc extends Bloc<WalletEvent, WalletState> {
-  final GetCoinDetailsUseCase _getCoinDetails;
-  final GetTonWalletBalanceUseCase _getTonWalletBalance;
-  final OpenTonWalletUseCase _openTonWallet;
+  final GetCoinDetailsUseCase _getCoinDetailsUseCase;
+  final GetTonWalletBalanceUseCase _getTonWalletBalanceUseCase;
+  final OpenTonWalletUseCase _openTonWalletUseCase;
 
   WalletBloc({
-    required GetCoinDetailsUseCase getCoinDetails,
-    required GetTonWalletBalanceUseCase getTonWalletBalance,
-    required OpenTonWalletUseCase openTonWallet,
-  })  : _getCoinDetails = getCoinDetails,
-        _getTonWalletBalance = getTonWalletBalance,
-        _openTonWallet = openTonWallet,
+    required GetCoinDetailsUseCase getCoinDetailsUseCase,
+    required GetTonWalletBalanceUseCase getTonWalletBalanceUseCase,
+    required OpenTonWalletUseCase openTonWalletUseCase,
+  })  : _getCoinDetailsUseCase = getCoinDetailsUseCase,
+        _getTonWalletBalanceUseCase = getTonWalletBalanceUseCase,
+        _openTonWalletUseCase = openTonWalletUseCase,
         super(WalletInitial()) {
     on<WalletLoadDataEvent>(_onLoadData);
   }
@@ -55,11 +55,11 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
     try {
       // Загружаем данные параллельно для оптимизации
-      final openedWallet = await _openTonWallet.call();
+      final openedWallet = await _openTonWalletUseCase.call();
       final ids = ['bitcoin', 'tether', 'the-open-network'];
       final results = await Future.wait([
-        _getTonWalletBalance.call(openedWallet),
-        Future.wait(ids.map(_getCoinDetails.call)),
+        _getTonWalletBalanceUseCase.call(openedWallet),
+        Future.wait(ids.map(_getCoinDetailsUseCase.call)),
       ]);
 
       final tonBalance = results[0] as double?;

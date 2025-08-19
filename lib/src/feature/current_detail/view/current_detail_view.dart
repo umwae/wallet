@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:stonwallet/src/feature/current_detail/view/chart_graph.dart';
+import 'package:intl/intl.dart';
+import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_scope.dart';
 
 class CurrentDetailView extends StatelessWidget {
   const CurrentDetailView({super.key});
@@ -56,34 +57,13 @@ class CurrentDetailView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          LineChartSample2(),
-
-          // График (заглушка)
-          // Container(
-          //   height: 180,
-          //   decoration: BoxDecoration(
-          //     color: const Color(0xFF1C3145),
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   child: const Center(
-          //     child: Text('График цены', style: TextStyle(color: Colors.white38)),
-          //   ),
-          // ),
-
-          // const SizedBox(height: 12),
-
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: const [
-          //     _PeriodTab(title: '1Д', index: 0, selected: true),
-          //     _PeriodTab(title: '7Д', index: 1),
-          //     _PeriodTab(title: '1М', index: 2),
-          //     _PeriodTab(title: '1Г', index: 3),
-          //     _PeriodTab(title: 'Все', index: 4),
-          //   ],
-          // ),
-
-          // const SizedBox(height: 24),
+          ChartGraphScope(
+            id: 'the-open-network',
+            vsCurrency: 'rub',
+            from: '2025-08-01',
+            to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            // interval: 'daily',
+          ),
 
           // Баланс TON
           Container(
