@@ -5,8 +5,8 @@ import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.da
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 
-class CurrentDetailPage extends StatelessWidget {
-  const CurrentDetailPage({super.key});
+class CurrentDetailScope extends StatelessWidget {
+  const CurrentDetailScope({super.key});
 
   @override
   Widget build(BuildContext context) {

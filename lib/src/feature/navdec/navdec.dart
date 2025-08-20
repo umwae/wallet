@@ -286,7 +286,7 @@ enum Routes {
           Routes.home => const HomePage(),
           Routes.login => const LoginPage(),
           Routes.counter => CounterPage(),
-          Routes.currentDetail => CurrentDetailPage(),
+          Routes.currentDetail => CurrentDetailScope(),
           Routes.transactions => TransactionsPage(),
         },
       );

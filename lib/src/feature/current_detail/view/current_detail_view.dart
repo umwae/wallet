@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_scope.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
 
@@ -11,9 +12,14 @@ class CurrentDetailView extends BasePage {
   const CurrentDetailView({super.key});
 
   @override
-  Future<void> onRefresh() async {
-    // buildContext.read<CurrentDetailCubit>().reset();
-    debugPrint('CurrentDetailView: onRefresh triggered');
+  Future<void> onRefresh(BuildContext context) async {
+    final periodIndex = context.read<CurrentDetailCubit>().state;
+    await context.read<ChartGraphCubit>().loadChart(
+          id: 'the-open-network',
+          vsCurrency: 'rub',
+          from: _getFromByPeriod(periodIndex),
+          to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        );
   }
 
   @override
@@ -56,6 +62,7 @@ class CurrentDetailView extends BasePage {
           ),
           BlocBuilder<CurrentDetailCubit, int>(
             builder: (context, periodIndex) {
+              debugPrint('++++++++++++ periodIndex: $periodIndex');
               return ChartGraphScope(
                 key: ValueKey(periodIndex),
                 id: 'the-open-network',

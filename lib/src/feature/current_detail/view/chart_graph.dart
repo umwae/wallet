@@ -246,7 +246,7 @@ Widget _periodChangeText(ChartGraphState chartState, int periodIndex) {
     }
     final color = data.isDiffPositive ? Colors.green : Colors.red;
     return Text(
-      '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)} ₽  $periodLabel',
+      '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diff.toStringAsFixed(2)} ₽  $periodLabel',
       style: TextStyle(color: color, fontSize: 14),
     );
   }

@@ -41,11 +41,11 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
       getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(logger: deps.logger),
       openTonWalletUseCase: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
     );
-    onRefresh();
+    onRefresh(context);
   }
 
   @override //Загрузка монет и баланса
-  Future<void> onRefresh() async {
+  Future<void> onRefresh(BuildContext context) async {
     _walletBloc.add(WalletLoadDataEvent());
   }
 

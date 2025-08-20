@@ -9,7 +9,7 @@ abstract class BasePage extends StatelessWidget {
     AppNavigator.pop(context);
   }
 
-  Future<void> onRefresh() async {
+  Future<void> onRefresh(BuildContext context) async {
     // Базовая реализация по умолчанию
     await Future<void>.delayed(const Duration(seconds: 1));
   }
@@ -26,7 +26,7 @@ abstract class BasePage extends StatelessWidget {
       child: CustomMaterialIndicator(
         clipBehavior: Clip.antiAlias,
         triggerMode: IndicatorTriggerMode.anywhere,
-        onRefresh: onRefresh,
+        onRefresh: () => onRefresh(context),
         child: buildContent(context),
       ),
     );
@@ -44,7 +44,7 @@ abstract class BaseStatefulPageState<T extends BaseStatefulPage> extends State<T
     AppNavigator.pop(context);
   }
 
-  Future<void> onRefresh() async {
+  Future<void> onRefresh(BuildContext context) async {
     // Базовая реализация по умолчанию
     await Future<void>.delayed(const Duration(seconds: 1));
   }
@@ -61,7 +61,7 @@ abstract class BaseStatefulPageState<T extends BaseStatefulPage> extends State<T
       child: CustomMaterialIndicator(
         clipBehavior: Clip.antiAlias,
         triggerMode: IndicatorTriggerMode.anywhere,
-        onRefresh: onRefresh,
+        onRefresh: () => onRefresh(context),
         child: buildContent(context),
       ),
     );
