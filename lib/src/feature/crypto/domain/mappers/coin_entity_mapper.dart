@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' show Colors;
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
-import 'package:stonwallet/src/feature/home/view/wallet_vm.dart';
+import 'package:stonwallet/src/feature/crypto/domain/entities/coin_entity.dart';
 
-extension CoinGeckoDetailsX on CoinGeckoDetails {
+extension CoinEntityMapper on CoinGeckoDetails {
   String get displayName => name;
   String get displaySymbol => symbol.toUpperCase();
   String get iconUrl => image.large;

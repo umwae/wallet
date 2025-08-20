@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:stonwallet/src/core/utils/extensions/coingecko_details_extension.dart';
 import 'package:stonwallet/src/core/utils/extensions/double_extension.dart';
+import 'package:stonwallet/src/feature/crypto/domain/entities/wallet_entity.dart';
+import 'package:stonwallet/src/feature/crypto/domain/mappers/coin_entity_mapper.dart';
 import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
-import 'package:stonwallet/src/feature/home/view/wallet_vm.dart';
 
 extension WalletLoadedX on WalletLoaded {
   WalletEntity toWalletEntity({required NumberFormat formatter}) {

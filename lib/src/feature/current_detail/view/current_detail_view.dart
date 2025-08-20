@@ -3,14 +3,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_scope.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
 
-class CurrentDetailView extends StatelessWidget {
+class CurrentDetailView extends BasePage {
   const CurrentDetailView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Future<void> onRefresh() async {
+    // buildContext.read<CurrentDetailCubit>().reset();
+    debugPrint('CurrentDetailView: onRefresh triggered');
+  }
+
+  @override
+  Widget buildContent(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0C1C2C),
       appBar: AppBar(
@@ -99,33 +106,36 @@ class CurrentDetailView extends StatelessWidget {
           const Text('О криптовалюте', style: TextStyle(color: Colors.white70)),
 
           const SizedBox(height: 16),
-
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.blueAccent),
-                  ),
-                  child: const Text('Купить', style: TextStyle(color: Colors.white)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                  ),
-                  child: const Text('Продать'),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
-      // bottomNavigationBar: const MainNavigationBar(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.blueAccent),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Купить', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Продать'),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

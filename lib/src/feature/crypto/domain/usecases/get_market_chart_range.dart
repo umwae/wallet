@@ -1,4 +1,4 @@
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/repositories/coingecko_repository.dart';
 
 class GetMarketChartRangeUseCase {

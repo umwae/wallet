@@ -3,7 +3,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 

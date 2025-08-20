@@ -1,6 +1,6 @@
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 
 abstract class CoinGeckoRepository {
   Future<void> ping();

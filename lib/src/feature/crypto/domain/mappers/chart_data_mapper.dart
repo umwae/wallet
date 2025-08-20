@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_market_chart_range.dart';
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 
 extension ChartDataMapper on CoinGeckoMarketChartRange {
   ChartDataEntity toChartPoints() {

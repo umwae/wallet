@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_market_chart_range.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 
-class CurrentDetailPage extends BasePage {
+class CurrentDetailPage extends StatelessWidget {
   const CurrentDetailPage({super.key});
 
   @override
-  Widget buildContent(BuildContext context) {
+  Widget build(BuildContext context) {
     final deps = DependenciesScope.of(context);
     final getMarketChartRangeUseCase = GetMarketChartRangeUseCase(deps.coinGeckoRepository);
     return MultiBlocProvider(

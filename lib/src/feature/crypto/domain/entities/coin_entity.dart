@@ -1,17 +1,5 @@
 import 'dart:ui' show Color;
 
-class WalletEntity {
-  final List<CoinEntity> assets;
-  final String totalTonBalance;
-  final String convertedTotalBalance;
-
-  const WalletEntity({
-    required this.assets,
-    required this.totalTonBalance,
-    required this.convertedTotalBalance,
-  });
-}
-
 class CoinEntity {
   final String id;
   final String name;

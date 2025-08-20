@@ -1,9 +1,9 @@
 import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/mappers/chart_data_mapper.dart';
 import 'package:stonwallet/src/feature/crypto/domain/repositories/coingecko_repository.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 
 class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   final CoinGeckoApiService _apiService;

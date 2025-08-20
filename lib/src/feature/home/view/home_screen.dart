@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/feature/crypto/domain/entities/coin_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_ton_wallet_balance_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/open_ton_wallet_usecase.dart';
 import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
 import 'package:stonwallet/src/feature/home/bloc/wallet_loaded_extension.dart';
-import 'package:stonwallet/src/feature/home/view/wallet_vm.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 

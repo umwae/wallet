@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stonwallet/src/feature/crypto/domain/entities/chart_data_entity.dart';
+import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_market_chart_range.dart';
 
 abstract class ChartGraphState {}
