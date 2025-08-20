@@ -25,7 +25,7 @@ class CurrentDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -37,17 +37,6 @@ class CurrentDetailView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.arrow_upward, color: Colors.green, size: 16),
-                        SizedBox(width: 4),
-                        Text(
-                          '+1,47%  +3,37 ₽  Сегодня',
-                          style: TextStyle(color: Colors.green, fontSize: 14),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -58,7 +47,6 @@ class CurrentDetailView extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
           BlocBuilder<CurrentDetailCubit, int>(
             builder: (context, periodIndex) {
               return ChartGraphScope(

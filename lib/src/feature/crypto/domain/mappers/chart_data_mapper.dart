@@ -47,6 +47,18 @@ extension ChartDataMapper on CoinGeckoMarketChartRange {
         spotToPrice[i.toDouble()] = avgPrice;
       }
     }
-    return ChartDataEntity(spotToPrice, spotsNormalizedDeduped);
+    //Определяем растет или падает курс чтобы потом менять цвета надписей
+    final priceDiff = spotToPrice.values.last - spotToPrice.values.first;
+    final percentDiff =
+        spotToPrice.values.first != 0 ? (priceDiff / spotToPrice.values.first * 100) : 0;
+    final isPositive = percentDiff >= 0;
+
+    return ChartDataEntity(
+      spotToPrice: spotToPrice,
+      spotsNormalized: spotsNormalizedDeduped,
+      diff: priceDiff,
+      diffPercent: percentDiff.toDouble(),
+      isDiffPositive: isPositive,
+    );
   }
 }

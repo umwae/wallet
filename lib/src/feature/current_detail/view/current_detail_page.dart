@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/get_market_chart_range.dart';
+import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
+import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 
-/// {@template counter_page}
-/// A [StatelessWidget] which is responsible for providing a
-/// [CurrentDetailCubit] instance to the [CurrentDetailView].
-/// {@endtemplate}
 class CurrentDetailPage extends BasePage {
-  /// {@macro counter_page}
   const CurrentDetailPage({super.key});
-  // static Route<void> route() {
-  //   return MaterialPageRoute<void>(builder: (_) => const CurrentDetailPage());
-  // }
+
   @override
   Widget buildContent(BuildContext context) {
-    return BlocProvider(
-      create: (_) => CurrentDetailCubit(),
+    final deps = DependenciesScope.of(context);
+    final getMarketChartRangeUseCase = GetMarketChartRangeUseCase(deps.coinGeckoRepository);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CurrentDetailCubit>(create: (_) => CurrentDetailCubit()),
+        BlocProvider<ChartGraphCubit>(create: (_) => ChartGraphCubit(getMarketChartRangeUseCase)),
+      ],
       child: const CurrentDetailView(),
     );
   }

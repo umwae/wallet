@@ -48,6 +48,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
             }
             return Column(
               children: [
+                Row(
+                  children: [
+                    _periodChangeArrow(chartState, state),
+                    SizedBox(width: 4),
+                    _periodChangeText(chartState, state),
+                  ],
+                ),
                 Stack(
                   children: <Widget>[
                     AspectRatio(
@@ -205,6 +212,45 @@ class _PeriodTab extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _periodChangeArrow(ChartGraphState chartState, int periodIndex) {
+  if (chartState is ChartGraphLoaded) {
+    final data = chartState.chartData;
+    final color = data.isDiffPositive ? Colors.green : Colors.red;
+    return Icon(
+      data.isDiffPositive ? Icons.arrow_upward : Icons.arrow_downward,
+      color: color,
+      size: 16,
+    );
+  } else {
+    return const SizedBox.shrink();
+  }
+}
+
+Widget _periodChangeText(ChartGraphState chartState, int periodIndex) {
+  if (chartState is ChartGraphLoaded) {
+    final data = chartState.chartData;
+    String periodLabel;
+    switch (periodIndex) {
+      case 0:
+        periodLabel = 'За день';
+      case 1:
+        periodLabel = 'За 7 дней';
+      case 2:
+        periodLabel = 'За месяц';
+      case 3:
+        periodLabel = 'За год';
+      default:
+        periodLabel = 'За период';
+    }
+    final color = data.isDiffPositive ? Colors.green : Colors.red;
+    return Text(
+      '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)} ₽  $periodLabel',
+      style: TextStyle(color: color, fontSize: 14),
+    );
+  }
+  return const SizedBox.shrink();
 }
 
 class AppColors {
