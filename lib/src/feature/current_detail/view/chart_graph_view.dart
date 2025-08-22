@@ -4,18 +4,19 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
+import 'package:stonwallet/src/core/utils/extensions/double_extension.dart';
 import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 
-class LineChartSample2 extends StatefulWidget {
-  const LineChartSample2({super.key});
+class ChartGraphView extends StatefulWidget {
+  const ChartGraphView({super.key});
 
   @override
-  State<LineChartSample2> createState() => _LineChartSample2State();
+  State<ChartGraphView> createState() => _ChartGraphViewState();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _ChartGraphViewState extends State<ChartGraphView> {
   bool showAvg = false;
 
   @override
@@ -94,7 +95,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
     final minPrice = prices.reduce((a, b) => a < b ? a : b);
     final maxPrice = prices.reduce((a, b) => a > b ? a : b);
     final realPrice = minPrice + (maxPrice - minPrice) * (value / 100);
-    return Text(realPrice.toStringAsFixed(2), style: style, textAlign: TextAlign.right);
+    return Text(realPrice.compactFormatted(locale: "en"), style: style, textAlign: TextAlign.right);
   }
 
   LineChartData mainData(
@@ -186,7 +187,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
                       ((chartData.spotToPrice.length - 1) / 100 * touchedSpot.x).round()] ??
                   99;
               return LineTooltipItem(
-                '${realPrice.toStringAsFixed(2)}₽',
+                realPrice.compactFormatted(locale: 'ru_RU'),
                 TextStyle(color: Colors.white),
               );
             }).toList();
@@ -260,7 +261,7 @@ Widget _periodChangeText(ChartGraphState chartState, int periodIndex, BuildConte
     }
     final color = data.isDiffPositive ? extraColors.contentColorGreen : extraColors.contentColorRed;
     return Text(
-      '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diff.toStringAsFixed(2)} ₽  $periodLabel',
+      '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diff.formatted()}  $periodLabel',
       style: TextStyle(color: color, fontSize: 14),
     );
   }

@@ -9,6 +9,7 @@ class CoinEntity {
   final String priceTrunc;
   String coinBalance;
   String coinBalanceConverted;
+  final String description;
   final String? iconURL;
   final String? priceChangePercentage24h;
   Color earningsColor;
@@ -23,6 +24,7 @@ class CoinEntity {
     required this.coinBalance,
     required this.coinBalanceConverted,
     required this.earningsColor,
+    required this.description,
     this.iconURL,
     this.priceChangePercentage24h,
   });

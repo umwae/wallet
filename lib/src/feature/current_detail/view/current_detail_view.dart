@@ -1,15 +1,20 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/feature/crypto/domain/entities/coin_entity.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_scope.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/current_detail_cubit.dart';
+import 'package:translator/translator.dart';
 
 class CurrentDetailView extends BasePage {
-  const CurrentDetailView({super.key});
+  final CoinEntity coinEntity;
+  final translator = GoogleTranslator();
+  CurrentDetailView({required this.coinEntity, super.key});
 
   @override
   Future<void> onRefresh(BuildContext context) async {
@@ -30,7 +35,7 @@ class CurrentDetailView extends BasePage {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
-        title: Text('Toncoin',
+        title: Text(coinEntity.name,
             style: theme.textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
         centerTitle: true,
         leading: const BackButton(),
@@ -45,25 +50,25 @@ class CurrentDetailView extends BasePage {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '232,84 ₽',
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    coinEntity.priceFormatted,
+                    style: theme.textTheme.displaySmall?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: colorScheme.primary,
-                    child: Icon(Icons.currency_bitcoin, color: colorScheme.onPrimary),
+                    backgroundColor: colorScheme.primaryContainer,
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: coinEntity.iconURL ?? 'https://example.com/icon.png',
+                        placeholder: (context, url) => const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -72,15 +77,15 @@ class CurrentDetailView extends BasePage {
           const SizedBox(height: 16),
           BlocBuilder<CurrentDetailCubit, int>(
             builder: (context, periodIndex) {
-              debugPrint('++++++++++++ periodIndex: $periodIndex');
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ChartGraphScope(
                   key: ValueKey(periodIndex),
-                  id: 'the-open-network',
+                  id: coinEntity.id,
                   vsCurrency: 'rub',
                   from: _getFromByPeriod(periodIndex),
-                  to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                  to: DateFormat("yyyy-MM-dd'T'HH:mm").format(DateTime.now()),
+                  interval: null,
                 ),
               );
             },
@@ -99,18 +104,20 @@ class CurrentDetailView extends BasePage {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Ваш баланс в TON',
-                            style: theme.textTheme.bodyMedium
-                                ?.copyWith(color: colorScheme.onSecondaryContainer)),
+                        Text(
+                          'Ваш баланс в ${coinEntity.symbol}',
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: colorScheme.onSecondaryContainer),
+                        ),
                         const SizedBox(height: 8),
                         Text(
-                          '0,00 ₽',
+                          coinEntity.coinBalanceConverted,
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: colorScheme.onSecondaryContainer,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text('0,00000001 TON',
+                        Text('${coinEntity.coinBalance}',
                             style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.onSecondaryContainer.withOpacity(0.6))),
                       ],
@@ -118,19 +125,29 @@ class CurrentDetailView extends BasePage {
                   ),
                   Icon(Icons.qr_code, color: colorScheme.primary),
                   const SizedBox(width: 12),
-                  Text('Получить TON',
+                  Text('Получить ${coinEntity.symbol}',
                       style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.primary)),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text('О криптовалюте',
                 style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: FutureBuilder(
+              future: translator.translate(coinEntity.description, to: 'ru'),
+              builder: (context, snapshot) => Text(
+                snapshot.data?.text ?? coinEntity.description,
+                style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+              ),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: Padding(
@@ -173,14 +190,14 @@ String _getFromByPeriod(int periodIndex) {
   final now = DateTime.now();
   switch (periodIndex) {
     case 0:
-      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 1)));
+      return DateFormat("yyyy-MM-dd'T'HH:mm").format(now.subtract(Duration(days: 1)));
     case 1:
-      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 7)));
+      return DateFormat("yyyy-MM-dd'T'HH:mm").format(now.subtract(Duration(days: 7)));
     case 2:
-      return DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month - 1, now.day));
+      return DateFormat("yyyy-MM-dd'T'HH:mm").format(DateTime(now.year, now.month - 1, now.day));
     case 3:
-      return DateFormat('yyyy-MM-dd').format(DateTime(now.year - 1, now.month, now.day));
+      return DateFormat("yyyy-MM-dd'T'HH:mm").format(DateTime(now.year - 1, now.month, now.day));
     default:
-      return DateFormat('yyyy-MM-dd').format(now.subtract(Duration(days: 1)));
+      return DateFormat("yyyy-MM-dd'T'HH:mm").format(now.subtract(Duration(days: 1)));
   }
 }

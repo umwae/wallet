@@ -27,16 +27,18 @@ extension CoinEntityMapper on CoinGeckoDetails {
 
   CoinEntity toCoinEntity() {
     return CoinEntity(
-        id: id,
-        name: displayName,
-        price: marketData.currentPrice['rub'].toString(),
-        priceTrunc: priceInRubValue(),
-        symbol: displaySymbol,
-        priceFormatted: priceInRubFormatted(),
-        iconURL: iconUrl,
-        priceChangePercentage24h: priceChangePercentage24hRub(),
-        coinBalance: 0.toString(),
-        coinBalanceConverted: 0.toString(),
-        earningsColor: Colors.transparent);
+      id: id,
+      name: displayName,
+      price: marketData.currentPrice['rub'].toString(),
+      priceTrunc: priceInRubValue(),
+      symbol: displaySymbol,
+      priceFormatted: priceInRubFormatted(),
+      iconURL: iconUrl,
+      priceChangePercentage24h: priceChangePercentage24hRub(),
+      coinBalance: 0.toString(),
+      coinBalanceConverted: 0.toString(),
+      earningsColor: Colors.transparent,
+      description: description.en,
+    );
   }
 }

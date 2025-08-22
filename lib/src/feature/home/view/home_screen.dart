@@ -38,7 +38,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
     final deps = DependenciesScope.of(context);
     _walletBloc = WalletBloc(
       getCoinDetailsUseCase: GetCoinDetailsUseCase(deps.coinGeckoRepository),
-      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(logger: deps.logger),
+      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(logger: _homeLogger),
       openTonWalletUseCase: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
     );
     onRefresh(context);
@@ -150,7 +150,8 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                     builder: (context, state) {
                                       final balanceText = switch (state) {
                                         WalletLoaded() => state
-                                            .toWalletEntity(formatter: rubFormatter, context: context)
+                                            .toWalletEntity(
+                                                formatter: rubFormatter, context: context)
                                             .convertedTotalBalance,
                                         _ => '',
                                       };
@@ -285,7 +286,8 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                         ),
                       );
                     } else if (state is WalletLoaded) {
-                      final coinEntitys = state.toWalletEntity(formatter: rubFormatter, context: context).assets;
+                      final coinEntitys =
+                          state.toWalletEntity(formatter: rubFormatter, context: context).assets;
                       return Column(
                         children: [
                           ...coinEntitys.map((c) => _AssetItem(coinEntity: c)).toList(),
@@ -400,7 +402,8 @@ class _AssetItem extends StatelessWidget {
             ),
           ],
         ),
-        onTap: () => AppNavigator.push(context, Routes.currentDetail.page()),
+        onTap: () => AppNavigator.push(
+            context, Routes.currentDetail.page(arguments: {'coinEntity': coinEntity})),
       ),
     );
   }

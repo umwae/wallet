@@ -36,16 +36,22 @@ extension ChartDataMapper on CoinGeckoMarketChartRange {
       final realPrice = pricesData[i][1].toDouble();
       bucketsRealPrice[bucketIdx].add(realPrice);
     }
-    // Усредняем Y в каждой корзине, получая 100 точек (а по-хорошему тут нужен LTTB Downsampling)
+    // Усредняем Y в каждой корзине кроме последней, получая 99 точек (а по-хорошему тут нужен LTTB Downsampling)
     final spotsNormalizedDeduped = <FlSpot>[];
     final spotToPrice = <double, double>{};
-    for (var i = 0; i < bucketCount; i++) {
+    for (var i = 0; i < (bucketCount - 1); i++) {
       if (bucketsY[i].isNotEmpty) {
         final avgY = bucketsY[i].reduce((a, b) => a + b) / bucketsY[i].length;
         spotsNormalizedDeduped.add(FlSpot(i.toDouble(), avgY));
         final avgPrice = bucketsRealPrice[i].reduce((a, b) => a + b) / bucketsRealPrice[i].length;
         spotToPrice[i.toDouble()] = avgPrice;
       }
+    }
+    //В последней корзине берем последнюю точку
+    if (bucketsY[bucketCount - 1].isNotEmpty) {
+      spotsNormalizedDeduped
+          .add(FlSpot((bucketCount - 1).toDouble(), bucketsY[bucketCount - 1].last));
+      spotToPrice[(bucketCount - 1).toDouble()] = bucketsRealPrice[bucketCount - 1].last;
     }
     //Определяем растет или падает курс чтобы потом менять цвета надписей
     final priceDiff = spotToPrice.values.last - spotToPrice.values.first;

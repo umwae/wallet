@@ -277,7 +277,7 @@ enum Routes {
         arguments: arguments,
         key: switch ((key, arguments)) {
           (LocalKey key, _) => key,
-          (_, Map<String, Object?> arguments) => ValueKey(
+          (_, final Map<String, Object?> arguments) => ValueKey(
               '$name#${shortHash(arguments)}',
             ),
           _ => ValueKey<String>(name),
@@ -285,9 +285,9 @@ enum Routes {
         child: switch (this) {
           Routes.home => const HomePage(),
           Routes.login => const LoginPage(),
-          Routes.counter => CounterPage(),
-          Routes.currentDetail => CurrentDetailScope(),
-          Routes.transactions => TransactionsPage(),
+          Routes.counter => const CounterPage(),
+          Routes.currentDetail => const CurrentDetailScope(),
+          Routes.transactions => const TransactionsPage(),
         },
       );
 }

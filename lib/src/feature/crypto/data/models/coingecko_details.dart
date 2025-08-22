@@ -13,6 +13,7 @@ class CoinGeckoDetails with _$CoinGeckoDetails {
     required String name,
     @JsonKey(name: 'market_data') required MarketData marketData,
     required Image image,
+    required Description description,
   }) = _CoinGeckoDetails;
 
   factory CoinGeckoDetails.fromJson(Map<String, dynamic> json) => _$CoinGeckoDetailsFromJson(json);
@@ -32,6 +33,16 @@ class MarketData with _$MarketData {
   }) = _MarketData;
 
   factory MarketData.fromJson(Map<String, dynamic> json) => _$MarketDataFromJson(json);
+}
+
+@freezed
+class Description with _$Description {
+  const factory Description({
+    required String en,
+    String? ru,
+  }) = _Description;
+
+  factory Description.fromJson(Map<String, dynamic> json) => _$DescriptionFromJson(json);
 }
 
 @freezed

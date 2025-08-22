@@ -15,7 +15,7 @@ extension WalletLoadedX on WalletLoaded {
     for (final c in assets) {
       final cryptoFormatter =
           NumberFormat.currency(locale: 'ru_RU', decimalDigits: 2, symbol: c.symbol);
-      c.coinBalance = balances[c.id]?.floorFormat(numberFormat: cryptoFormatter) ?? 0.toString();
+      c.coinBalance = (balances[c.id] ?? 0).floorFormat(numberFormat: cryptoFormatter);
       //Заполняем балансы каждой криптовалюты в рублях/долларах
       c.coinBalanceConverted =
           ((balances[c.id] ?? 0) * double.parse(c.price)).floorFormat(numberFormat: formatter);

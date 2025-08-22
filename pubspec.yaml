@@ -78,6 +78,7 @@ dependencies:
   cached_network_image: ^3.4.1
   tonutils: ^0.5.7
   freezed_annotation: ^2.4.4
+  translator: ^1.0.3+1
 
 dev_dependencies:
   bloc_test: ^10.0.0
