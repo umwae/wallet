@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
 
 /// {@template app_theme}
 /// An immutable class that holds properties needed
@@ -17,6 +18,16 @@ final class AppTheme with Diagnosticable {
             onSurfaceVariant: const Color.fromARGB(255, 132, 132, 132),
             // onSurfaceVariant: const Color.fromARGB(255, 144, 164, 194),
           ),
+          extensions: [
+            ExtraColors(
+              mainGridLineColor: const Color(0x1AFFFFFF),
+              gridLinesColor: const Color(0x11FFFFFF),
+              contentColorGreen: const Color(0xFF3BFF49),
+              contentColorRed: const Color.fromARGB(255, 232, 0, 0),
+              gradientGainColor: const Color.fromARGB(255, 114, 235, 101),
+              gradientLossColor: const Color.fromARGB(255, 255, 70, 70),
+            ),
+          ],
           useMaterial3: true,
         ),
         lightTheme = ThemeData(

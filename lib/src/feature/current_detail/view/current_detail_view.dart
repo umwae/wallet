@@ -24,94 +24,112 @@ class CurrentDetailView extends BasePage {
 
   @override
   Widget buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFF0C1C2C),
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF152A3A),
-        title: Text('Toncoin'),
+        backgroundColor: colorScheme.surface,
+        title: Text('Toncoin',
+            style: theme.textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
         centerTitle: true,
         leading: const BackButton(),
-        // actions: const [Icon(Icons.close), SizedBox(width: 16)],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '232,84 ₽',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+          Card(
+            color: colorScheme.surfaceVariant,
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '232,84 ₽',
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: colorScheme.primary,
+                    child: Icon(Icons.currency_bitcoin, color: colorScheme.onPrimary),
+                  ),
+                ],
               ),
-              const CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.blueAccent,
-                child: Icon(Icons.currency_bitcoin, color: Colors.white),
-              ),
-            ],
+            ),
           ),
+          const SizedBox(height: 16),
           BlocBuilder<CurrentDetailCubit, int>(
             builder: (context, periodIndex) {
               debugPrint('++++++++++++ periodIndex: $periodIndex');
-              return ChartGraphScope(
-                key: ValueKey(periodIndex),
-                id: 'the-open-network',
-                vsCurrency: 'rub',
-                from: _getFromByPeriod(periodIndex),
-                to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                // interval: 'daily',
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ChartGraphScope(
+                  key: ValueKey(periodIndex),
+                  id: 'the-open-network',
+                  vsCurrency: 'rub',
+                  from: _getFromByPeriod(periodIndex),
+                  to: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                ),
               );
             },
           ),
           const SizedBox(height: 16),
-          // Баланс TON
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A2E40),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Ваш баланс в TON', style: TextStyle(color: Colors.white70)),
-                      SizedBox(height: 8),
-                      Text(
-                        '0,00 ₽',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+          Card(
+            color: colorScheme.secondaryContainer,
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Ваш баланс в TON',
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSecondaryContainer)),
+                        const SizedBox(height: 8),
+                        Text(
+                          '0,00 ₽',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text('0,00000001 TON', style: TextStyle(color: Colors.white38)),
-                    ],
+                        Text('0,00000001 TON',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSecondaryContainer.withOpacity(0.6))),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(Icons.qr_code, color: Colors.white54),
-                SizedBox(width: 12),
-                Text('Получить TON', style: TextStyle(color: Colors.blueAccent)),
-              ],
+                  Icon(Icons.qr_code, color: colorScheme.primary),
+                  const SizedBox(width: 12),
+                  Text('Получить TON',
+                      style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.primary)),
+                ],
+              ),
             ),
           ),
-
           const SizedBox(height: 24),
-
-          const Text('О криптовалюте', style: TextStyle(color: Colors.white70)),
-
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text('О криптовалюте',
+                style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+          ),
           const SizedBox(height: 16),
         ],
       ),
@@ -123,21 +141,25 @@ class CurrentDetailView extends BasePage {
               child: OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.blueAccent),
+                  side: BorderSide(color: colorScheme.primary),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  foregroundColor: colorScheme.primary,
                 ),
-                child: const Text('Купить', style: TextStyle(color: Colors.white)),
+                child: Text('Купить',
+                    style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.primary)),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: ElevatedButton(
+              child: FilledButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  foregroundColor: colorScheme.onPrimary,
                 ),
-                child: const Text('Продать'),
+                child: Text('Продать',
+                    style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onPrimary)),
               ),
             ),
           ],

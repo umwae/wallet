@@ -3,6 +3,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
 import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
@@ -15,23 +16,26 @@ class LineChartSample2 extends StatefulWidget {
 }
 
 class _LineChartSample2State extends State<LineChartSample2> {
-  List<Color> gradientColors = [
-    AppColors.contentColorCyan,
-    AppColors.contentColorBlue,
-  ];
-  List<Color> bullGradientColors = [
-    const Color.fromARGB(255, 114, 235, 101),
-    const Color.fromARGB(255, 0, 0, 0),
-  ];
-  List<Color> bearGradientColors = [
-    const Color.fromARGB(255, 255, 70, 70),
-    const Color.fromARGB(255, 192, 10, 10),
-  ];
-
   bool showAvg = false;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final extraColors = theme.extension<ExtraColors>()!;
+    // final gradientColors = [
+    //   AppColors.contentColorCyan,
+    //   AppColors.contentColorBlue,
+    // ];
+    final bullGradientColors = [
+      extraColors.gradientGainColor,
+      colorScheme.surface,
+    ];
+    final bearGradientColors = [
+      extraColors.gradientLossColor,
+      colorScheme.surface,
+    ];
+
     return BlocBuilder<CurrentDetailCubit, int>(
       builder: (context, state) {
         return BlocBuilder<ChartGraphCubit, ChartGraphState>(
@@ -40,7 +44,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
             if (chartState is ChartGraphLoading) {
               chartWidget = const Center(child: CircularProgressIndicator());
             } else if (chartState is ChartGraphLoaded) {
-              chartWidget = LineChart(mainData(chartState.chartData));
+              chartWidget =
+                  LineChart(mainData(chartState.chartData, bullGradientColors, bearGradientColors));
             } else if (chartState is ChartGraphError) {
               chartWidget = Center(child: Text(chartState.message));
             } else {
@@ -50,9 +55,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
               children: [
                 Row(
                   children: [
-                    _periodChangeArrow(chartState, state),
+                    _periodChangeArrow(chartState, state, context),
                     SizedBox(width: 4),
-                    _periodChangeText(chartState, state),
+                    _periodChangeText(chartState, state, context),
                   ],
                 ),
                 Stack(
@@ -92,7 +97,12 @@ class _LineChartSample2State extends State<LineChartSample2> {
     return Text(realPrice.toStringAsFixed(2), style: style, textAlign: TextAlign.right);
   }
 
-  LineChartData mainData(ChartDataEntity chartData) {
+  LineChartData mainData(
+    ChartDataEntity chartData,
+    List<Color> bullGradientColors,
+    List<Color> bearGradientColors,
+  ) {
+    final extraColors = Theme.of(context).extension<ExtraColors>()!;
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -100,8 +110,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
         horizontalInterval: 20,
         // verticalInterval: 100.0 / chartData.spotToPrice.length - 1,
         getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: AppColors.mainGridLineColor,
+          return FlLine(
+            color: extraColors.mainGridLineColor,
             strokeWidth: 1,
           );
         },
@@ -145,7 +155,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
           spots: chartData.spotsNormalized,
           isCurved: true,
           curveSmoothness: 0.2,
-          color: AppColors.contentColorGreen,
+          color: chartData.isDiffPositive
+              ? extraColors.contentColorGreen
+              : extraColors.contentColorRed,
           barWidth: 2,
           isStrokeCapRound: true,
           dotData: const FlDotData(
@@ -214,10 +226,11 @@ class _PeriodTab extends StatelessWidget {
   }
 }
 
-Widget _periodChangeArrow(ChartGraphState chartState, int periodIndex) {
+Widget _periodChangeArrow(ChartGraphState chartState, int periodIndex, BuildContext context) {
+  final extraColors = Theme.of(context).extension<ExtraColors>()!;
   if (chartState is ChartGraphLoaded) {
     final data = chartState.chartData;
-    final color = data.isDiffPositive ? Colors.green : Colors.red;
+    final color = data.isDiffPositive ? extraColors.contentColorGreen : extraColors.contentColorRed;
     return Icon(
       data.isDiffPositive ? Icons.arrow_upward : Icons.arrow_downward,
       color: color,
@@ -228,7 +241,8 @@ Widget _periodChangeArrow(ChartGraphState chartState, int periodIndex) {
   }
 }
 
-Widget _periodChangeText(ChartGraphState chartState, int periodIndex) {
+Widget _periodChangeText(ChartGraphState chartState, int periodIndex, BuildContext context) {
+  final extraColors = Theme.of(context).extension<ExtraColors>()!;
   if (chartState is ChartGraphLoaded) {
     final data = chartState.chartData;
     String periodLabel;
@@ -244,35 +258,11 @@ Widget _periodChangeText(ChartGraphState chartState, int periodIndex) {
       default:
         periodLabel = 'За период';
     }
-    final color = data.isDiffPositive ? Colors.green : Colors.red;
+    final color = data.isDiffPositive ? extraColors.contentColorGreen : extraColors.contentColorRed;
     return Text(
       '${data.isDiffPositive ? '+' : ''}${data.diffPercent.toStringAsFixed(2)}%  ${data.isDiffPositive ? '+' : ''}${data.diff.toStringAsFixed(2)} ₽  $periodLabel',
       style: TextStyle(color: color, fontSize: 14),
     );
   }
   return const SizedBox.shrink();
-}
-
-class AppColors {
-  static const Color primary = contentColorCyan;
-  static const Color menuBackground = Color(0xFF090912);
-  static const Color itemsBackground = Color(0xFF1B2339);
-  static const Color pageBackground = Color(0xFF282E45);
-  static const Color mainTextColor1 = Colors.white;
-  static const Color mainTextColor2 = Colors.white70;
-  static const Color mainTextColor3 = Colors.white38;
-  static const Color mainGridLineColor = Colors.white10;
-  static const Color borderColor = Colors.white54;
-  static const Color gridLinesColor = Color(0x11FFFFFF);
-
-  static const Color contentColorBlack = Colors.black;
-  static const Color contentColorWhite = Colors.white;
-  static const Color contentColorBlue = Color(0xFF2196F3);
-  static const Color contentColorYellow = Color(0xFFFFC300);
-  static const Color contentColorOrange = Color(0xFFFF683B);
-  static const Color contentColorGreen = Color(0xFF3BFF49);
-  static const Color contentColorPurple = Color(0xFF6E1BFF);
-  static const Color contentColorPink = Color(0xFFFF3AF2);
-  static const Color contentColorRed = Color(0xFFE80054);
-  static const Color contentColorCyan = Color(0xFF50E4FF);
 }

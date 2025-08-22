@@ -75,7 +75,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
       decimalDigits: 2,
     );
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -150,7 +150,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                                     builder: (context, state) {
                                       final balanceText = switch (state) {
                                         WalletLoaded() => state
-                                            .toWalletEntity(formatter: rubFormatter)
+                                            .toWalletEntity(formatter: rubFormatter, context: context)
                                             .convertedTotalBalance,
                                         _ => '',
                                       };
@@ -285,7 +285,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
                         ),
                       );
                     } else if (state is WalletLoaded) {
-                      final coinEntitys = state.toWalletEntity(formatter: rubFormatter).assets;
+                      final coinEntitys = state.toWalletEntity(formatter: rubFormatter, context: context).assets;
                       return Column(
                         children: [
                           ...coinEntitys.map((c) => _AssetItem(coinEntity: c)).toList(),

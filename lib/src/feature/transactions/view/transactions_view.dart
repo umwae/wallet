@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
 
 class Transaction {
   final String type; // 'sent', 'received', 'contract', etc.
@@ -134,7 +134,7 @@ class TransactionsView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ...entry.value.map((tx) => _buildTransactionTile(tx)),
+                    ...entry.value.map((tx) => _buildTransactionTile(tx, context)),
                   ],
                 );
               }).toList(),
@@ -167,7 +167,8 @@ class TransactionsView extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionTile(Transaction tx) {
+  Widget _buildTransactionTile(Transaction tx, BuildContext context) {
+    final extraColors = Theme.of(context).extension<ExtraColors>()!;
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(bottom: 10),
@@ -212,9 +213,9 @@ class TransactionsView extends StatelessWidget {
                   tx.amount,
                   style: TextStyle(
                     color: tx.amount.startsWith('+')
-                        ? Colors.green
+                        ? extraColors.contentColorGreen
                         : tx.amount.startsWith('-')
-                            ? Colors.red
+                            ? extraColors.contentColorRed
                             : Colors.white,
                     fontWeight: FontWeight.w600,
                   ),

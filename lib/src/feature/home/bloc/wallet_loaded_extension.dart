@@ -1,13 +1,15 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
 import 'package:stonwallet/src/core/utils/extensions/double_extension.dart';
 import 'package:stonwallet/src/feature/crypto/domain/entities/wallet_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/mappers/coin_entity_mapper.dart';
 import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
 
 extension WalletLoadedX on WalletLoaded {
-  WalletEntity toWalletEntity({required NumberFormat formatter}) {
+  WalletEntity toWalletEntity({required NumberFormat formatter, required BuildContext context}) {
+    final extraColors = Theme.of(context).extension<ExtraColors>()!;
     final assets = coins.map((c) => c.toCoinEntity()).toList();
     //Заполняем балансы каждой криптовалюты
     for (final c in assets) {
@@ -19,9 +21,9 @@ extension WalletLoadedX on WalletLoaded {
           ((balances[c.id] ?? 0) * double.parse(c.price)).floorFormat(numberFormat: formatter);
       //Заполняем цвет в зависимости от изменения цены
       c.earningsColor = (c.priceChangePercentage24h ?? '').startsWith('-')
-          ? Colors.red
+          ? extraColors.contentColorRed
           : (c.priceChangePercentage24h ?? '').startsWith('+')
-              ? Colors.green
+              ? extraColors.contentColorGreen
               : Colors.transparent;
     }
 
