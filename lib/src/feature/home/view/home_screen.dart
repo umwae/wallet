@@ -38,8 +38,8 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
     final deps = DependenciesScope.of(context);
     _walletBloc = WalletBloc(
       getCoinDetailsUseCase: GetCoinDetailsUseCase(deps.coinGeckoRepository),
-      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(logger: _homeLogger),
-      openTonWalletUseCase: OpenTonWalletUseCase(secureStorage: deps.secureStorage),
+      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(deps.tonWalletRepository, logger: _homeLogger),
+      openTonWalletUseCase: OpenTonWalletUseCase(deps.tonWalletRepository, secureStorage: deps.secureStorage),
     );
     onRefresh(context);
   }
