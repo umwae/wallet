@@ -57,3 +57,5 @@ pubspec.lock
 # Test reports
 reports/
 lib/src/core/constant/api_keys.dart
+
+*.env

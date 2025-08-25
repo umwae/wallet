@@ -79,6 +79,7 @@ dependencies:
   tonutils: ^0.5.7
   freezed_annotation: ^2.4.4
   translator: ^1.0.3+1
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   bloc_test: ^10.0.0
@@ -106,6 +107,8 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - env/.dev.env
+    # - env/.env.prod
 
 flutter_gen:
   output: lib/src/core/constant/generated

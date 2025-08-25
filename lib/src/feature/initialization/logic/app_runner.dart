@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
 import 'package:stonwallet/src/core/constant/config.dart';
 import 'package:stonwallet/src/core/utils/app_bloc_observer.dart';
 import 'package:stonwallet/src/core/utils/bloc_transformer.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
-import 'package:stonwallet/src/feature/counter_observer.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
 import 'package:stonwallet/src/feature/initialization/widget/app.dart';
 import 'package:stonwallet/src/feature/initialization/widget/initialization_failed_app.dart';
@@ -28,6 +28,8 @@ final class AppRunner {
     // Preserve splash screen
     binding.deferFirstFrame();
 
+    const env = String.fromEnvironment('ENV', defaultValue: 'dev');
+    await dotenv.load(fileName: 'env/.$env.env');
     // Override logging
     FlutterError.onError = logger.logFlutterError;
     WidgetsBinding.instance.platformDispatcher.onError = logger.logPlatformDispatcherError;
