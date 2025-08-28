@@ -17,15 +17,15 @@ import 'package:stonwallet/src/feature/navdec/navdec.dart';
 /// {@template home_screen}
 /// The main screen of the application.
 /// {@endtemplate}
-class HomePage extends BaseStatefulPage {
+class HomeView extends BaseStatefulPage {
   /// {@macro home_screen}
-  const HomePage({super.key});
+  const HomeView({super.key});
 
   @override
-  BaseStatefulPageState<HomePage> createState() => _HomePageState();
+  BaseStatefulPageState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBindingObserver {
+class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBindingObserver {
   late final _homeLogger = DependenciesScope.of(context).logger.withPrefix('[HOME]');
   late final WalletBloc _walletBloc;
 
@@ -33,7 +33,7 @@ class _HomePageState extends BaseStatefulPageState<HomePage> with WidgetsBinding
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _homeLogger.info('HomePage initialized');
+    _homeLogger.info('HomeView initialized');
 
     final deps = DependenciesScope.of(context);
     _walletBloc = WalletBloc(

@@ -56,7 +56,7 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
     final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
     final transactions = await client.getTransactions(
       address,
-      limit: 10,
+      limit: 100,
     );
     final entities = <TransactionEntity>[];
     for (final tx in transactions) {

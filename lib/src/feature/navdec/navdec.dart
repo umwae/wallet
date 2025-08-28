@@ -13,9 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
-import 'package:stonwallet/src/feature/home/view/home_screen.dart';
+import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
-import 'package:stonwallet/src/feature/transactions/view/transactions_scope.dart';
+import 'package:stonwallet/src/feature/transactions/cubit/transactions_scope.dart';
 
 /// Type definition for the navigation state.
 typedef NavigationState = List<Page<Object?>>;
@@ -248,12 +248,12 @@ class DebugObserver extends NavigatorObserver {
 //     builder:
 //         (context, _) => AppNavigator(
 //           key: _preserveKey,
-//           pages: const [MaterialPage<void>(child: HomePage())],
+//           pages: const [MaterialPage<void>(child: HomeView())],
 //           guards: [
 //             (pages) =>
 //                 pages.length > 1
 //                     ? pages
-//                     : [const MaterialPage(child: HomePage())],
+//                     : [const MaterialPage(child: HomeView())],
 //           ],
 //         ),
 //   );
@@ -282,7 +282,7 @@ enum Routes {
           _ => ValueKey<String>(name),
         },
         child: switch (this) {
-          Routes.home => const HomePage(),
+          Routes.home => const HomeView(),
           Routes.login => const LoginPage(),
           Routes.counter => const CounterPage(),
           Routes.currentDetail => const CurrentDetailScope(),
@@ -292,11 +292,11 @@ enum Routes {
 }
 
 /// {@template home_screen}
-/// HomePage widget.
+/// HomeView widget.
 /// {@endtemplate}
-// class HomePage extends StatelessWidget {
+// class HomeView extends StatelessWidget {
 //   /// {@macro home_screen}
-//   const HomePage({super.key});
+//   const HomeView({super.key});
 
 //   @override
 //   Widget build(BuildContext context) => Scaffold(

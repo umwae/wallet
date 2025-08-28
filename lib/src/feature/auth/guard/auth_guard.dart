@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auth_repository/auth_repository.dart';
 import 'package:stonwallet/src/feature/auth/bloc/auth_bloc.dart';
-import 'package:stonwallet/src/feature/home/view/home_screen.dart';
+import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
@@ -16,7 +16,7 @@ NavigationState Function(NavigationState) authGuard(AuthState authState) {
         // перенаправляем на домашний экран
         final lastPage = pages.last;
         if (lastPage is MaterialPage && lastPage.child is LoginPage) {
-          return [const MaterialPage<void>(child: HomePage())];
+          return [const MaterialPage<void>(child: HomeView())];
         }
         return pages;
       case AuthStatus.unauthenticated:

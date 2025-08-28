@@ -6,7 +6,7 @@ import 'package:stonwallet/src/core/utils/layout/window_size.dart';
 import 'package:stonwallet/src/feature/auth/bloc/auth_bloc.dart';
 import 'package:stonwallet/src/feature/auth/guard/auth_guard.dart';
 import 'package:stonwallet/src/feature/crypto/presentation/provider/coingecko_provider.dart';
-import 'package:stonwallet/src/feature/home/view/home_screen.dart';
+import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/initialization/widget/material_context.dart';
