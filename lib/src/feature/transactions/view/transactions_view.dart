@@ -1,114 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
+import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
+import 'package:stonwallet/src/core/widget/base_page.dart';
+import 'package:stonwallet/src/feature/transactions/cubit/transactions_cubit.dart';
+import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
 
-class Transaction {
-  final String type; // 'sent', 'received', 'contract', etc.
-  final String title;
-  final String subtitle;
-  final String amount;
-  final String date;
-  final IconData icon;
-  final Color color;
-  final String? comment;
-  final String monthYear;
-
-  Transaction({
-    required this.type,
-    required this.title,
-    required this.subtitle,
-    required this.amount,
-    required this.date,
-    required this.icon,
-    required this.color,
-    this.comment,
-    required this.monthYear,
-  });
-}
-
-class TransactionsView extends StatelessWidget {
+class TransactionsView extends BasePage {
   final List<String> filters = ['Отправлено', 'Получено', 'Спам'];
 
-  final List<Transaction> transactions = [
-    Transaction(
-      type: 'contract',
-      title: 'Вызов контракта',
-      subtitle: 'UQCZ...SudU',
-      amount: '-0,42 TON',
-      date: '26 авг, 12:35',
-      icon: Icons.settings,
-      color: Colors.grey,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'received',
-      title: 'Получено',
-      subtitle: 'EQBN...u8D-',
-      amount: '+29 084 DOGS',
-      date: '26 авг, 12:35',
-      icon: Icons.download,
-      color: Colors.green,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'received',
-      title: 'Получено',
-      subtitle: 'Wallet in Telegram',
-      amount: '+0,5 TON',
-      date: '26 авг, 12:21',
-      icon: Icons.account_balance_wallet,
-      color: Colors.green,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'sent',
-      title: 'Отправлено',
-      subtitle: 'UQCm...R1WL',
-      amount: '-0,1 TON',
-      date: '14 авг, 14:35',
-      icon: Icons.upload,
-      color: Colors.red,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'init',
-      title: 'Кошелёк инициализи',
-      subtitle: 'UQCZ...SudU',
-      amount: '',
-      date: '14 авг, 14:35',
-      icon: Icons.check_circle,
-      color: Colors.grey,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'received',
-      title: 'Получено',
-      subtitle: 'Wallet in Telegram',
-      amount: '+0,1 TON',
-      date: '14 авг, 14:28',
-      icon: Icons.account_balance_wallet,
-      color: Colors.green,
-      monthYear: 'Август 2024',
-    ),
-    Transaction(
-      type: 'received',
-      title: 'Получено',
-      subtitle: 'EQCK...CZwT',
-      amount: '+0,047 TON',
-      date: '19 июнь, 20:49',
-      icon: Icons.download,
-      color: Colors.green,
-      comment: 'from kakaxa with love',
-      monthYear: 'Июнь 2024',
-    ),
-  ];
+  @override
+  Future<void> onRefresh(BuildContext context) async {
+    final deps = DependenciesScope.of(context);
+    await context.read<TransactionsCubit>().fetchTransactions(deps.openedWallet.address);
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final grouped = _groupByMonth(transactions);
-
+  Widget buildContent(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('История'),
+        title: const Text('История транзакций'),
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
@@ -117,29 +28,34 @@ class TransactionsView extends StatelessWidget {
         children: [
           _buildFilters(),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(12),
-              children: grouped.entries.map((entry) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-                      child: Text(
-                        entry.key,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w600,
+            child: BlocBuilder<TransactionsCubit, List<TransactionEntity>>(
+              builder: (context, transactions) {
+                final grouped = _groupByMonth(transactions);
+                return ListView(
+                  padding: const EdgeInsets.all(12),
+                  children: grouped.entries.map((entry) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
+                          child: Text(
+                            entry.key,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    ...entry.value.map((tx) => _buildTransactionTile(tx, context)),
-                  ],
+                        ...entry.value.map((tx) => _buildTransactionTile(tx, context)),
+                      ],
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             ),
-          )
+          ),
         ],
       ),
     );
@@ -151,24 +67,25 @@ class TransactionsView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: filters
-            .map((label) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[850],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    label,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ))
+            .map(
+              (label) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.grey[850],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  label,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            )
             .toList(),
       ),
     );
   }
 
-  Widget _buildTransactionTile(Transaction tx, BuildContext context) {
-    final extraColors = Theme.of(context).extension<ExtraColors>()!;
+  Widget _buildTransactionTile(TransactionEntity tx, BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(bottom: 10),
@@ -179,25 +96,25 @@ class TransactionsView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(tx.icon, color: tx.color, size: 28),
+          Icon(tx.icon, color: _getTransactionColor(tx, context), size: 28),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tx.title,
+                  tx.typeLocalized,
                   style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
                 Text(
-                  tx.subtitle,
+                  tx.date,
                   style: const TextStyle(fontSize: 13, color: Colors.white60),
                 ),
-                if (tx.comment != null)
+                if (tx.message != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      tx.comment!,
+                      tx.message!,
                       style: const TextStyle(color: Colors.white70, fontSize: 13),
                     ),
                   ),
@@ -212,11 +129,7 @@ class TransactionsView extends StatelessWidget {
                 Text(
                   tx.amount,
                   style: TextStyle(
-                    color: tx.amount.startsWith('+')
-                        ? extraColors.contentColorGreen
-                        : tx.amount.startsWith('-')
-                            ? extraColors.contentColorRed
-                            : Colors.white,
+                    color: _getTransactionColor(tx, context),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -231,11 +144,21 @@ class TransactionsView extends StatelessWidget {
     );
   }
 
-  Map<String, List<Transaction>> _groupByMonth(List<Transaction> txs) {
-    final Map<String, List<Transaction>> grouped = {};
-    for (var tx in txs) {
+  Map<String, List<TransactionEntity>> _groupByMonth(List<TransactionEntity> txs) {
+    final grouped = <String, List<TransactionEntity>>{};
+    for (final tx in txs) {
       grouped.putIfAbsent(tx.monthYear, () => []).add(tx);
     }
     return grouped;
   }
+}
+
+Color _getTransactionColor(TransactionEntity tx, BuildContext context) {
+  final extraColors = Theme.of(context).extension<ExtraColors>()!;
+  final color = switch (tx.type) {
+    TransactionType.incoming => extraColors.contentColorGreen,
+    TransactionType.outgoing => extraColors.contentColorRed,
+    _ => Theme.of(context).colorScheme.onSurfaceVariant,
+  };
+  return color;
 }

@@ -10,6 +10,7 @@ import 'package:stonwallet/src/feature/crypto/data/repositories/ton_wallet_repos
 import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 import 'package:stonwallet/src/feature/initialization/logic/composition_root.dart';
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
+import 'package:tonutils/tonutils.dart' show WalletContractV4R2;
 
 /// {@template dependencies_container}
 /// Composed dependencies from the [CompositionRoot].
@@ -33,6 +34,7 @@ class DependenciesContainer {
     required this.coinGeckoRepository,
     required this.coinGeckoUseCase,
     required this.tonWalletRepository,
+    required this.openedWallet,
   });
 
   /// [Logger] instance, used to log messages.
@@ -58,6 +60,7 @@ class DependenciesContainer {
   final CoinGeckoRepositoryImpl coinGeckoRepository;
   final PingCoinGeckoUseCase coinGeckoUseCase;
   final TonWalletRepositoryImpl tonWalletRepository;
+  final WalletContractV4R2 openedWallet;
 }
 
 /// {@template testing_dependencies_container}

@@ -1,4 +1,6 @@
 import 'package:stonwallet/src/core/utils/logger.dart';
+import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
+import 'package:stonwallet/src/feature/transactions/domain/mappers/transaction_entity_mapper.dart';
 import 'package:tonutils/tonutils.dart';
 import 'package:stonwallet/src/feature/crypto/domain/repositories/ton_wallet_repository.dart';
 import 'package:stonwallet/src/core/service/secure_storage_service.dart';
@@ -30,7 +32,7 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
   @override
   Future<WalletContractV4R2> openWallet(SecureStorageService secureStorage) async {
     var keyPair = await secureStorage.getKeyPair();
-    keyPair ??= await _generateAndSaveMnemonic(secureStorage);
+    keyPair ??= await _generateAndSaveKeyPair(secureStorage);
     final wallet = WalletContractV4R2.create(publicKey: keyPair.publicKey);
     final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
     final opened = client.open(wallet);
@@ -40,34 +42,27 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
     return opened;
   }
 
-  Future<KeyPair> _generateAndSaveMnemonic(SecureStorageService secureStorage) async {
+  Future<KeyPair> _generateAndSaveKeyPair(SecureStorageService secureStorage) async {
     final mnemonics = tonkeeperMnemonics.split(' ');
-    final keyPair = Mnemonic.toKeyPair(mnemonics); //Секунд 40 генерит, очень долго
+    final keyPair = Mnemonic.toKeyPair(
+      mnemonics,
+    ); //TODO: запускать в отдельном потоке - секунд 40 генерит, очень долго
     await secureStorage.saveKeyPair(keyPair);
     return keyPair;
   }
 
-//   @override
-//   Future<void> fetchTransactions(String address) async {
-//   final client = TonJsonRpc('https://testnet.toncenter.com/api/v2/jsonRPC', testnetApiKey);
-
-//   // пример: берем 10 транзакций
-//   final response = await client.request('getTransactions', {
-//     'address': address,
-//     'limit': 10,
-//     'archival': true,
-//   });
-
-//   // response будет Map<String, dynamic>
-//   final transactions = response['result'] as List<dynamic>;
-
-//   for (final tx in transactions) {
-//     print('LT: ${tx['transaction_id']['lt']}');
-//     print('Hash: ${tx['transaction_id']['hash']}');
-//     print('Now: ${tx['utime']}');
-//     print('In Msgs: ${tx['in_msg']}');
-//     print('Out Msgs: ${tx['out_msgs']}');
-//     print('------');
-//   }
-// }
+  @override
+  Future<List<TransactionEntity>> fetchTransactions(InternalAddress address) async {
+    final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
+    final transactions = await client.getTransactions(
+      address,
+      limit: 10,
+    );
+    final entities = <TransactionEntity>[];
+    for (final tx in transactions) {
+      final separatedTransactions = mapRawTransaction(tx, address.toString());
+      entities.addAll(separatedTransactions);
+    }
+    return entities;
+  }
 }

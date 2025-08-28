@@ -13,6 +13,7 @@ import 'package:stonwallet/src/core/utils/logger.dart';
 import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
 import 'package:stonwallet/src/feature/crypto/data/repositories/coingecko_repository_impl.dart';
 import 'package:stonwallet/src/feature/crypto/data/repositories/ton_wallet_repository_impl.dart';
+import 'package:stonwallet/src/feature/crypto/domain/usecases/open_ton_wallet_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 import 'package:stonwallet/src/feature/initialization/model/dependencies_container.dart';
 import 'package:stonwallet/src/feature/settings/bloc/app_settings_bloc.dart';
@@ -132,6 +133,8 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
     final coinGeckoUseCase = PingCoinGeckoUseCase(coinGeckoRepository);
     // --- Ton Wallet dependencies ---
     final tonWalletRepository = TonWalletRepositoryImpl();
+    final openedWallet =
+        await OpenTonWalletUseCase(tonWalletRepository, secureStorage: secureStorage).call();
 
     return DependenciesContainer(
       logger: logger,
@@ -145,6 +148,7 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
       coinGeckoRepository: coinGeckoRepository,
       coinGeckoUseCase: coinGeckoUseCase,
       tonWalletRepository: tonWalletRepository,
+      openedWallet: openedWallet,
     );
   }
 }
@@ -187,7 +191,6 @@ class SettingsBlocFactory extends AsyncFactory<AppSettingsBloc> {
 
   /// Shared preferences instance
   final SharedPreferencesAsync sharedPreferences;
-
 
   @override
   Future<AppSettingsBloc> create() async {

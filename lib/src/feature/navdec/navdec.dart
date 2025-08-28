@@ -6,7 +6,6 @@
  * Mike Matiunin <plugfox@gmail.com>, 14 March 2025
  */
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
@@ -16,7 +15,7 @@ import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/home/view/home_screen.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
-import 'package:stonwallet/src/feature/transactions/view/transactions_page.dart';
+import 'package:stonwallet/src/feature/transactions/view/transactions_scope.dart';
 
 /// Type definition for the navigation state.
 typedef NavigationState = List<Page<Object?>>;
@@ -276,7 +275,7 @@ enum Routes {
         name: name,
         arguments: arguments,
         key: switch ((key, arguments)) {
-          (LocalKey key, _) => key,
+          (final LocalKey key, _) => key,
           (_, final Map<String, Object?> arguments) => ValueKey(
               '$name#${shortHash(arguments)}',
             ),
@@ -287,7 +286,7 @@ enum Routes {
           Routes.login => const LoginPage(),
           Routes.counter => const CounterPage(),
           Routes.currentDetail => const CurrentDetailScope(),
-          Routes.transactions => const TransactionsPage(),
+          Routes.transactions => const TransactionsScope(),
         },
       );
 }
