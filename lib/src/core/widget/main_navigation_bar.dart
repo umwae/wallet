@@ -31,8 +31,6 @@ class MainNavigationBar extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Assets'),
           BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Transactions'),
-          BottomNavigationBarItem(icon: Icon(Icons.language), label: 'Browser'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
