@@ -7,7 +7,7 @@ import 'package:stonwallet/src/feature/transactions/cubit/transactions_cubit.dar
 import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
 
 class TransactionsView extends BasePage {
-  final List<String> filters = ['Отправлено', 'Получено', 'Спам'];
+  final List<String> filters = ['Отправлено', 'Получено', 'Все'];
 
   @override
   Future<void> onRefresh(BuildContext context) async {
@@ -35,9 +35,9 @@ class TransactionsView extends BasePage {
               centerTitle: true,
             ),
             SliverToBoxAdapter(child: _buildFilters(context)),
-            BlocBuilder<TransactionsCubit, List<TransactionEntity>>(
-              builder: (context, transactions) {
-                final grouped = _groupByMonth(transactions);
+            BlocBuilder<TransactionsCubit, TransactionsState>(
+              builder: (context, state) {
+                final grouped = _groupByMonth(state.filteredTransactions);
                 final sectionWidgets = <Widget>[];
                 for (final entry in grouped.entries) {
                   sectionWidgets.add(
@@ -71,29 +71,37 @@ class TransactionsView extends BasePage {
   Widget _buildFilters(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      child: Row(
-        children: [
-          for (final label in filters)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(label),
-                selected: false,
-                onSelected: (_) {},
-                labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface,
+    return BlocBuilder<TransactionsCubit, TransactionsState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: Row(
+            children: [
+              for (final filter in filters)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(filter),
+                    selected: state.selectedFilter == filter,
+                    onSelected: (selected) {
+                      context.read<TransactionsCubit>().setFilter(selected ? filter : null);
+                    },
+                    labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: state.selectedFilter == filter
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurface,
+                    ),
+                    backgroundColor: colorScheme.surfaceVariant,
+                    selectedColor: colorScheme.primaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
-                backgroundColor: colorScheme.surfaceVariant,
-                selectedColor: colorScheme.primaryContainer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
