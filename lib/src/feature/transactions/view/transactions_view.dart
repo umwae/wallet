@@ -17,129 +17,161 @@ class TransactionsView extends BasePage {
 
   @override
   Widget buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('История транзакций'),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: [
-          _buildFilters(),
-          Expanded(
-            child: BlocBuilder<TransactionsCubit, List<TransactionEntity>>(
+      backgroundColor: colorScheme.surface,
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              backgroundColor: colorScheme.surface,
+              pinned: true,
+              title: Text(
+                'История транзакций',
+                style: theme.textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+              ),
+              centerTitle: true,
+            ),
+            SliverToBoxAdapter(child: _buildFilters(context)),
+            BlocBuilder<TransactionsCubit, List<TransactionEntity>>(
               builder: (context, transactions) {
                 final grouped = _groupByMonth(transactions);
-                return ListView(
-                  padding: const EdgeInsets.all(12),
-                  children: grouped.entries.map((entry) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-                          child: Text(
-                            entry.key,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                final sectionWidgets = <Widget>[];
+                for (final entry in grouped.entries) {
+                  sectionWidgets.add(
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      child: Text(
+                        entry.key,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
                         ),
-                        ...entry.value.map((tx) => _buildTransactionTile(tx, context)),
-                      ],
-                    );
-                  }).toList(),
+                      ),
+                    ),
+                  );
+                  sectionWidgets.addAll(
+                    entry.value.map((tx) => _buildTransactionTile(tx, context)).toList(),
+                  );
+                }
+                return SliverList(
+                  delegate: SliverChildListDelegate(sectionWidgets),
                 );
               },
             ),
-          ),
-        ],
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilters() {
+  Widget _buildFilters(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: filters
-            .map(
-              (label) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.grey[850],
+        children: [
+          for (final label in filters)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                label: Text(label),
+                selected: false,
+                onSelected: (_) {},
+                labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+                backgroundColor: colorScheme.surfaceVariant,
+                selectedColor: colorScheme.primaryContainer,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
-                  label,
-                  style: const TextStyle(color: Colors.white),
-                ),
               ),
-            )
-            .toList(),
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildTransactionTile(TransactionEntity tx, BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(tx.icon, color: _getTransactionColor(tx, context), size: 28),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final amountColor = _getTransactionColor(tx, context);
+    return Card(
+      color: colorScheme.surfaceVariant,
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: colorScheme.primaryContainer,
+              child: Icon(tx.icon, color: colorScheme.onPrimaryContainer),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tx.typeLocalized,
+                    style: theme.textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    tx.date,
+                    style:
+                        theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                  if (tx.message != null && tx.message!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          tx.message!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  tx.typeLocalized,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                ),
-                Text(
-                  tx.date,
-                  style: const TextStyle(fontSize: 13, color: Colors.white60),
-                ),
-                if (tx.message != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      tx.message!,
-                      style: const TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
+                  tx.amount,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: amountColor,
                   ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _shortAddress(tx.counterparty),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (tx.amount.isNotEmpty)
-                Text(
-                  tx.amount,
-                  style: TextStyle(
-                    color: _getTransactionColor(tx, context),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              Text(
-                tx.date,
-                style: const TextStyle(color: Colors.white38, fontSize: 12),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -161,4 +193,9 @@ Color _getTransactionColor(TransactionEntity tx, BuildContext context) {
     _ => Theme.of(context).colorScheme.onSurfaceVariant,
   };
   return color;
+}
+
+String _shortAddress(String address) {
+  if (address.length <= 8) return address;
+  return '${address.substring(0, 4)}...${address.substring(address.length - 4)}';
 }
