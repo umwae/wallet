@@ -7,7 +7,7 @@ mixin BottomSheetMixin {
     bool isScrollControlled = false,
     Color? backgroundColor,
     Widget Function(Widget)? wrapper,
-    bool useRootNavigator = false,
+    bool useRootNavigator = true, //Иначе возникают проблемы с закрытием на аппаратную кнопку
     bool enableDrag = true,
     bool isDismissible = true,
     bool withCloseButton = true,
@@ -35,8 +35,6 @@ mixin BottomSheetMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // _topCapsule(),
-              // const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: Stack(

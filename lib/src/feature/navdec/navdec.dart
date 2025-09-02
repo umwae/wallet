@@ -31,6 +31,7 @@ class AppNavigator extends StatefulWidget {
     this.observers = const [],
     this.transitionDelegate = const DefaultTransitionDelegate<Object?>(),
     this.revalidate,
+    this.onBackButtonPressed,
     super.key,
   })  : assert(pages.isNotEmpty, 'pages cannot be empty'),
         controller = null;
@@ -42,6 +43,7 @@ class AppNavigator extends StatefulWidget {
     this.observers = const [],
     this.transitionDelegate = const DefaultTransitionDelegate<Object?>(),
     this.revalidate,
+    this.onBackButtonPressed,
     super.key,
   })  : assert(controller.value.isNotEmpty, 'controller cannot be empty'),
         pages = controller.value;
@@ -83,6 +85,9 @@ class AppNavigator extends StatefulWidget {
     navigator.change((_) => navigator.widget.pages);
   }
 
+  /// The back button handler to use for the navigator.
+  final NavigationState Function(NavigationState)? onBackButtonPressed;
+
   /// Initial pages to display.
   final NavigationState pages;
 
@@ -106,7 +111,7 @@ class AppNavigator extends StatefulWidget {
 }
 
 /// State for widget AppNavigator.
-class AppNavigatorState extends State<AppNavigator> {
+class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver {
   /// The current [Navigator] state (null if not yet built).
   NavigatorState? get navigator => _observer.navigator;
 
@@ -126,6 +131,7 @@ class AppNavigatorState extends State<AppNavigator> {
     _observers = <NavigatorObserver>[_observer, ...widget.observers];
     widget.controller?.addListener(_controllerListener);
     _controllerListener();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -150,7 +156,25 @@ class AppNavigatorState extends State<AppNavigator> {
     super.dispose();
     widget.controller?.removeListener(_controllerListener);
     widget.revalidate?.removeListener(revalidate);
+    WidgetsBinding.instance.removeObserver(this);
   }
+
+  @override
+  Future<bool> didPopRoute() {
+    // If the back button handler is defined, call it.
+    final backButtonHandler = widget.onBackButtonPressed;
+    if (backButtonHandler != null) {
+      final result = backButtonHandler(_state.toList());
+      change((pages) => result);
+      return SynchronousFuture(true);
+    }
+
+    // Otherwise, handle the back button press with the default behavior.
+    if (_state.length < 2) return SynchronousFuture(false);
+    _onDidRemovePage(_state.last);
+    return SynchronousFuture(true);
+  }
+
   /* #endregion */
 
   void _setStateToController() {

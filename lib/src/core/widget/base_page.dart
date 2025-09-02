@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
 abstract class BasePage extends StatelessWidget {
   const BasePage({super.key});
-
-  Future<void> onClose(BuildContext context) async {
-    AppNavigator.pop(context);
-  }
 
   Future<void> onRefresh(BuildContext context) async {
     // Базовая реализация по умолчанию
@@ -16,19 +11,11 @@ abstract class BasePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        debugPrint('[DBG] onPopInvoked: didPop=$didPop');
-        if (didPop) return;
-        await onClose(context);
-      },
-      child: CustomMaterialIndicator(
-        clipBehavior: Clip.antiAlias,
-        triggerMode: IndicatorTriggerMode.anywhere,
-        onRefresh: () => onRefresh(context),
-        child: buildContent(context),
-      ),
+    return CustomMaterialIndicator(
+      clipBehavior: Clip.antiAlias,
+      triggerMode: IndicatorTriggerMode.anywhere,
+      onRefresh: () => onRefresh(context),
+      child: buildContent(context),
     );
   }
 
@@ -40,10 +27,6 @@ abstract class BaseStatefulPage extends StatefulWidget {
 }
 
 abstract class BaseStatefulPageState<T extends BaseStatefulPage> extends State<T> {
-  Future<void> onClose(BuildContext context) async {
-    AppNavigator.pop(context);
-  }
-
   Future<void> onRefresh(BuildContext context) async {
     // Базовая реализация по умолчанию
     await Future<void>.delayed(const Duration(seconds: 1));
@@ -51,19 +34,11 @@ abstract class BaseStatefulPageState<T extends BaseStatefulPage> extends State<T
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        debugPrint('[DBG] onPopInvoked: didPop=$didPop');
-        if (didPop) return;
-        await onClose(context);
-      },
-      child: CustomMaterialIndicator(
-        clipBehavior: Clip.antiAlias,
-        triggerMode: IndicatorTriggerMode.anywhere,
-        onRefresh: () => onRefresh(context),
-        child: buildContent(context),
-      ),
+    return CustomMaterialIndicator(
+      clipBehavior: Clip.antiAlias,
+      triggerMode: IndicatorTriggerMode.anywhere,
+      onRefresh: () => onRefresh(context),
+      child: buildContent(context),
     );
   }
 
