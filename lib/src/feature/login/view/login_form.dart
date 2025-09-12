@@ -93,7 +93,7 @@ class _LoginButton extends StatelessWidget {
       onPressed: isValid
           ? () {
               context.read<LoginBloc>().add(const LoginSubmitted());
-              AppNavigator.push(context, Routes.home.page());
+              AppNavigator.push(context, Routes.home.toPage());
             }
           : null,
       child: const Text('Login'),

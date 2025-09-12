@@ -110,7 +110,7 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                                     children: [
                                       IconButton.filled(
                                         onPressed: () =>
-                                            AppNavigator.push(context, Routes.counter.page()),
+                                            AppNavigator.push(context, Routes.counter.toPage()),
                                         icon: const Icon(Icons.lock),
                                         style: IconButton.styleFrom(
                                           backgroundColor: colorScheme.primary,
@@ -403,7 +403,7 @@ class _AssetItem extends StatelessWidget {
           ],
         ),
         onTap: () => AppNavigator.push(
-            context, Routes.currentDetail.page(arguments: {'coinEntity': coinEntity})),
+            context, Routes.currentDetail.toPage(arguments: {'coinEntity': coinEntity})),
       ),
     );
   }

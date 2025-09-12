@@ -178,7 +178,7 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
   /* #endregion */
 
   void _setStateToController() {
-    if (widget.controller case ValueNotifier<NavigationState> controller) {
+    if (widget.controller case final ValueNotifier<NavigationState> controller) {
       controller
         ..removeListener(_controllerListener)
         ..value = _state
@@ -237,7 +237,7 @@ class AppNavigatorState extends State<AppNavigator> with WidgetsBindingObserver 
 
 class DebugObserver extends NavigatorObserver {
   @override
-  void didPop(Route route, Route? previousRoute) {
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     debugPrint('[DBG] Route popped: ${route.settings.name}');
   }
 }
@@ -295,7 +295,7 @@ enum Routes {
   const Routes();
 
   /// Converts the route to a [MaterialPage].
-  Page<Object?> page({Map<String, Object?>? arguments, LocalKey? key}) => MaterialPage<void>(
+  Page<Object?> toPage({Map<String, Object?>? arguments, LocalKey? key}) => MaterialPage<void>(
         name: name,
         arguments: arguments,
         key: switch ((key, arguments)) {
@@ -315,56 +315,9 @@ enum Routes {
       );
 }
 
-/// {@template home_screen}
-/// HomeView widget.
-/// {@endtemplate}
-// class HomeView extends StatelessWidget {
-//   /// {@macro home_screen}
-//   const HomeView({super.key});
-
-//   @override
-//   Widget build(BuildContext context) => Scaffold(
-//     appBar: AppBar(
-//       title: const Text('Home'),
-//       actions: [
-//         IconButton(
-//           icon: const Icon(Icons.settings),
-//           onPressed: () => AppNavigator.push(context, Routes.settings.page()),
-//         ),
-//       ],
-//     ),
-//     body: const SafeArea(child: Center(child: Text('Home'))),
-//   );
-// }
-
-// /// {@template settings_screen}
-// /// SettingsScreen widget.
-// /// {@endtemplate}
-// class SettingsScreen extends StatelessWidget {
-//   /// {@macro settings_screen}
-//   const SettingsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) => Scaffold(
-//     appBar: AppBar(
-//       leading: IconButton(
-//         icon: const Icon(Icons.arrow_back),
-//         onPressed:
-//             () => AppNavigator.change(
-//               context,
-//               (state) =>
-//                   state..removeWhere((p) => p.name == Routes.settings.name),
-//             ),
-//       ),
-//       title: const Text('Settings'),
-//     ),
-//     body: const SafeArea(child: Center(child: Text('Settings'))),
-//   );
-// }
-
+//==========================================================
 class TabNavigator extends StatefulWidget {
   final List<NavigationState Function(NavigationState)> guards;
-
   static TabNavigator? _instance;
 
   factory TabNavigator({
@@ -384,16 +337,24 @@ class TabNavigator extends StatefulWidget {
   State<TabNavigator> createState() => _TabNavigatorState();
 }
 
+//----------------------------------------------------------
 class _TabNavigatorState extends State<TabNavigator> {
   int _index = 0;
-
-  late final List<NavigationState Function(NavigationState)> _guards = widget.guards;
-
+  late final List<NavigationState Function(NavigationState)> _guards;
+  // late final List<GlobalKey<AppNavigatorState>> _navigatorKeys;
   // Отдельные навигационные стеки для каждой вкладки
-  final _tabs = [
-    [Routes.home.page()],
-    [Routes.transactions.page()],
+  late final _tabs = [
+    [Routes.home.toPage()],
+    [Routes.transactions.toPage()],
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _guards = widget.guards;
+    // // Добавляем GlobalKey для каждого навигационного стека
+    // _navigatorKeys = List.generate(_tabs.length, (i) => GlobalKey<AppNavigatorState>());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -402,7 +363,7 @@ class _TabNavigatorState extends State<TabNavigator> {
         index: _index,
         children: _tabs.map((stack) {
           return AppNavigator(
-            key: ValueKey(stack.first.name), // чтобы сохранить состояние
+            key: ValueKey(stack.first.name),
             pages: stack,
             guards: _guards,
           );
@@ -415,3 +376,25 @@ class _TabNavigatorState extends State<TabNavigator> {
     );
   }
 }
+
+  //   @override
+  // Widget build(BuildContext context) {
+  //   return IndexedStack(
+  //     index: _index,
+  //     children: List.generate(_tabs.length, (i) {
+  //       return Scaffold(
+  //         body: AppNavigator(
+  //           key: _navigatorKeys[i],
+  //           pages: _tabs[i],
+  //           guards: _guards,
+  //         ),
+  //         bottomNavigationBar: MainNavigationBar(
+  //           currentIndex: _index,
+  //           onTap: (j) => setState(() => _index = j),
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+
+//==========================================================

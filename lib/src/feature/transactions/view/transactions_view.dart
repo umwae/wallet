@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
@@ -201,6 +202,17 @@ class TransactionsView extends BasePage with BottomSheetMixin {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 32),
+        Card(
+          color: colorScheme.surfaceVariant,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: SvgPicture.asset(tx.coinImage, height: 50),
+            ),
+          ),
+        ),
+        const SizedBox(height: 48),
         _buildDetailRow('Сумма', tx.amount, theme, colorScheme, valueColor: amountColor),
         _buildDetailRow('Дата', tx.date, theme, colorScheme),
         _buildDetailRow('Адрес', tx.counterparty, theme, colorScheme),

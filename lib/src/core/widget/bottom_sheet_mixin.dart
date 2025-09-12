@@ -4,10 +4,10 @@ mixin BottomSheetMixin {
   void showKitBottomSheet(
     BuildContext context, {
     Widget Function(BuildContext context)? itemBuilder,
-    bool isScrollControlled = false,
+    bool isScrollControlled = true,
     Color? backgroundColor,
     Widget Function(Widget)? wrapper,
-    bool useRootNavigator = true, //Иначе возникают проблемы с закрытием на аппаратную кнопку
+    bool useRootNavigator = true,
     bool enableDrag = true,
     bool isDismissible = true,
     bool withCloseButton = true,
@@ -28,28 +28,32 @@ mixin BottomSheetMixin {
       ),
       useRootNavigator: useRootNavigator,
       builder: (context) {
-        final child = Container(
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    _titleWidget(title, context),
-                    Positioned(
-                      right: 0,
-                      child: _closeButton(context),
-                    ),
-                  ],
+        final child = FractionallySizedBox(
+          heightFactor: 0.8,
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      _titleWidget(title, context),
+                      Positioned(
+                        right: 0,
+                        child: _closeButton(context),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              itemBuilder?.call(context) ?? const SizedBox(),
-            ],
+                itemBuilder?.call(context) ?? const SizedBox(),
+              ],
+            ),
           ),
         );
 

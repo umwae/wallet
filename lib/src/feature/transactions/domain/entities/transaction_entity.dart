@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Color, IconData;
+import 'package:flutter/material.dart' show IconData;
 
 class TransactionEntity {
   final TransactionType type; // 'sent', 'received', 'contract', etc.
@@ -7,6 +7,7 @@ class TransactionEntity {
   final String amount;
   final String date;
   final IconData icon;
+  final String coinImage;
   final String? message;
   final String monthYear;
 
@@ -17,6 +18,7 @@ class TransactionEntity {
     required this.amount,
     required this.date,
     required this.icon,
+    required this.coinImage,
     required this.monthYear,
     this.message,
   });

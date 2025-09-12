@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stonwallet/src/core/constant/svg.dart';
 import 'package:stonwallet/src/core/utils/extensions/double_extension.dart';
 import 'package:stonwallet/src/core/utils/extensions/message_extension.dart';
 import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
@@ -34,6 +35,7 @@ TransactionEntity? _parseIncoming(Transaction tx, String accountAddress) {
     counterparty: info.src.toString(),
     message: msg.comment,
     icon: Icons.arrow_circle_down,
+    coinImage: PathsSvg.tonLogoDark,
   );
 }
 
@@ -60,6 +62,7 @@ List<TransactionEntity> _parseOutgoings(Transaction tx, String accountAddress) {
         counterparty: info.dest.toString(),
         message: null,
         icon: Icons.arrow_circle_up,
+        coinImage: PathsSvg.tonLogoDark,
       ),
     );
   }
