@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 mixin BottomSheetMixin {
-  void showKitBottomSheet(
+  void openBottomSheet(
     BuildContext context, {
     Widget Function(BuildContext context)? itemBuilder,
     bool isScrollControlled = true,

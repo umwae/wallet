@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
+import 'package:stonwallet/src/core/utils/extensions/string_extension.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/core/widget/base_page.dart';
 import 'package:stonwallet/src/core/widget/bottom_sheet_mixin.dart';
 import 'package:stonwallet/src/feature/transactions/cubit/transactions_cubit.dart';
 import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
 
-class TransactionsView extends BasePage with BottomSheetMixin {
+class TransactionsView extends BasePage {
   final List<String> filters = ['Отправлено', 'Получено', 'Все'];
 
   @override
@@ -113,7 +114,7 @@ class TransactionsView extends BasePage with BottomSheetMixin {
     final amountColor = _getTransactionColor(tx, context);
 
     return GestureDetector(
-      onTap: () => showKitBottomSheet(
+      onTap: () => openBottomSheet(
         context,
         itemBuilder: (context) => _buildTransactionDetails(tx, context),
       ),
@@ -179,7 +180,7 @@ class TransactionsView extends BasePage with BottomSheetMixin {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _shortAddress(tx.counterparty),
+                    tx.counterparty.shortForm(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -277,7 +278,3 @@ Color _getTransactionColor(TransactionEntity tx, BuildContext context) {
   return color;
 }
 
-String _shortAddress(String address) {
-  if (address.length <= 8) return address;
-  return '${address.substring(0, 4)}...${address.substring(address.length - 4)}';
-}
