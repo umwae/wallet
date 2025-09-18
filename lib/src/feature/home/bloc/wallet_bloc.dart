@@ -24,10 +24,12 @@ class WalletFailure extends WalletState {
 class WalletLoaded extends WalletState {
   final Map<String, double?> balances;
   final List<CoinGeckoDetails> coins;
+  final String address;
 
   WalletLoaded({
     required this.balances,
     required this.coins,
+    required this.address,
   });
 }
 
@@ -72,6 +74,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         WalletLoaded(
           balances: balances,
           coins: coins ?? [],
+          address: openedWallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true),
         ),
       );
     } catch (e) {
