@@ -54,10 +54,13 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
   @override
   Future<List<TransactionEntity>> fetchTransactions(InternalAddress address) async {
     final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
-    final transactions = await client.getTransactions(
-      address,
-      limit: 100,
-    );
+    var transactions = <Transaction>[];
+    try {
+      transactions = await client.getTransactions(
+        address,
+        limit: 2,
+      );
+    } catch (identifier) {}
     final entities = <TransactionEntity>[];
     for (final tx in transactions) {
       final separatedTransactions = mapRawTransaction(tx, address.toString());
