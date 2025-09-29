@@ -13,6 +13,8 @@ import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
 import 'package:stonwallet/src/feature/home/bloc/wallet_loaded_extension.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
+import 'package:stonwallet/src/feature/receive/view/receive_view.dart';
 
 /// {@template home_screen}
 /// The main screen of the application.
@@ -38,8 +40,10 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
     final deps = DependenciesScope.of(context);
     _walletBloc = WalletBloc(
       getCoinDetailsUseCase: GetCoinDetailsUseCase(deps.coinGeckoRepository),
-      getTonWalletBalanceUseCase: GetTonWalletBalanceUseCase(deps.tonWalletRepository, logger: _homeLogger),
-      openTonWalletUseCase: OpenTonWalletUseCase(deps.tonWalletRepository, secureStorage: deps.secureStorage),
+      getTonWalletBalanceUseCase:
+          GetTonWalletBalanceUseCase(deps.tonWalletRepository, logger: _homeLogger),
+      openTonWalletUseCase:
+          OpenTonWalletUseCase(deps.tonWalletRepository, secureStorage: deps.secureStorage),
     );
     onRefresh(context);
   }
@@ -109,8 +113,9 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                                   Row(
                                     children: [
                                       IconButton.filled(
-                                        onPressed: () =>
-                                            AppNavigator.push(context, Routes.counter.toPage()),
+                                        onPressed: () => context
+                                            .read<NavigationCubit>()
+                                            .push(Routes.counter.toPage()),
                                         icon: const Icon(Icons.lock),
                                         style: IconButton.styleFrom(
                                           backgroundColor: colorScheme.primary,
@@ -151,7 +156,9 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                                       final balanceText = switch (state) {
                                         WalletLoaded() => state
                                             .toWalletEntity(
-                                                formatter: rubFormatter, context: context)
+                                              formatter: rubFormatter,
+                                              context: context,
+                                            )
                                             .convertedTotalBalance,
                                         _ => '',
                                       };
@@ -174,13 +181,29 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                                       Expanded(
                                         child: _WalletAction(
                                           icon: Icons.arrow_upward,
-                                          label: 'Send',
+                                          label: 'Отправить',
+                                          action: () => context
+                                              .read<NavigationCubit>()
+                                              .push(Routes.scanner.toPage()),
                                         ),
                                       ),
                                       Expanded(
-                                        child: _WalletAction(
-                                          icon: Icons.arrow_downward,
-                                          label: 'Receive',
+                                        child: BlocBuilder<WalletBloc, WalletState>(
+                                          bloc: _walletBloc,
+                                          builder: (context, state) {
+                                            return switch (state) {
+                                              WalletLoaded() => _WalletAction(
+                                                  icon: Icons.arrow_downward,
+                                                  label: 'Получить',
+                                                  action: () => openBottomSheet(
+                                                    context,
+                                                    itemBuilder: (_) =>
+                                                        ReceiveView(address: state.address),
+                                                  ),
+                                                ),
+                                              _ => const CircularProgressIndicator(),
+                                            };
+                                          },
                                         ),
                                       ),
                                     ],
@@ -311,8 +334,13 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
 class _WalletAction extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback? action;
 
-  const _WalletAction({required this.icon, required this.label});
+  const _WalletAction({
+    required this.icon,
+    required this.label,
+    this.action,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +350,7 @@ class _WalletAction extends StatelessWidget {
       child: Column(
         children: [
           FilledButton(
-            onPressed: () {},
+            onPressed: action,
             style: FilledButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -402,8 +430,9 @@ class _AssetItem extends StatelessWidget {
             ),
           ],
         ),
-        onTap: () => AppNavigator.push(
-            context, Routes.currentDetail.toPage(arguments: {'coinEntity': coinEntity})),
+        onTap: () => context.read<NavigationCubit>().push(
+              Routes.currentDetail.toPage(arguments: {'coinEntity': coinEntity}),
+            ),
       ),
     );
   }
