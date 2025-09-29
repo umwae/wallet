@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:stonwallet/src/feature/login/login.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -93,7 +94,7 @@ class _LoginButton extends StatelessWidget {
       onPressed: isValid
           ? () {
               context.read<LoginBloc>().add(const LoginSubmitted());
-              AppNavigator.push(context, Routes.home.toPage());
+              context.read<NavigationCubit>().push(Routes.home.toPage());
             }
           : null,
       child: const Text('Login'),

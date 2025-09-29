@@ -5,8 +5,8 @@ import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
-NavigationState Function(NavigationState) authGuard(AuthState authState) {
-  return (NavigationState pages) {
+NavPages Function(NavPages) authGuard(AuthState authState) {
+  return (NavPages pages) {
     switch (authState.status) {
       case AuthStatus.unknown:
         // При неизвестном состоянии оставляем текущие страницы
