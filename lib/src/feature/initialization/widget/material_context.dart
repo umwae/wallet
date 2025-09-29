@@ -37,7 +37,7 @@ class MaterialContext extends StatelessWidget {
       locale: settings.locale,
       localizationsDelegates: Localization.localizationDelegates,
       supportedLocales: Localization.supportedLocales,
-      title: 'Declarative Navigation',
+      title: 'Stonwallet',
       debugShowCheckedModeBanner: true,
       home: TabNavigator(),
       // builder: (context, child) =>

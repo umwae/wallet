@@ -11,7 +11,9 @@ import 'package:stonwallet/src/feature/initialization/logic/composition_root.dar
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:stonwallet/src/feature/initialization/widget/material_context.dart';
 import 'package:stonwallet/src/feature/login/login.dart';
+import 'package:stonwallet/src/feature/navdec/deeplink_block.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
+import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
 import 'package:stonwallet/src/feature/settings/widget/settings_scope.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -32,6 +34,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navigationCubit = NavigationCubit();
+    final deepLinkBloc = DeepLinkBloc(navigationCubit);
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
@@ -42,6 +47,8 @@ class App extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider.value(value: navigationCubit),
+          BlocProvider.value(value: deepLinkBloc),
           BlocProvider<AuthBloc>(
             lazy: false,
             create: (context) => AuthBloc(
@@ -80,17 +87,17 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) => MaterialContext(
-        // title: 'Declarative Navigation',
-        // debugShowCheckedModeBanner: true,
-        // builder: (context, state) {
-        //   return AppNavigator(
-        //     key: _preserveKey,
-        //     pages: const [MaterialPage<void>(child: LoginPage())],
-        //     observers: [debugObserver],
-        //     guards: [
-        //       // authGuard(authState)
-        //     ],
-        //   );
-        // },
+      // title: 'Declarative Navigation',
+      // debugShowCheckedModeBanner: true,
+      // builder: (context, state) {
+      //   return AppNavigator(
+      //     key: _preserveKey,
+      //     pages: const [MaterialPage<void>(child: LoginPage())],
+      //     observers: [debugObserver],
+      //     guards: [
+      //       // authGuard(authState)
+      //     ],
+      //   );
+      // },
       );
 }
