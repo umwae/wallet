@@ -21,6 +21,7 @@ import 'package:stonwallet/src/feature/navdec/animated_page.dart';
 import 'package:stonwallet/src/feature/receive/view/receive_view.dart';
 import 'package:stonwallet/src/feature/send/confirm_sending_scope.dart';
 import 'package:stonwallet/src/feature/send/scanner.dart';
+import 'package:stonwallet/src/feature/settings/view/settings_view.dart';
 import 'package:stonwallet/src/feature/transactions/cubit/transactions_scope.dart';
 
 /// Type definition for the navigation state.
@@ -261,7 +262,8 @@ enum Routes {
   transactions,
   confirmSending,
   receive,
-  scanner;
+  scanner,
+  settings;
 
   const Routes();
 
@@ -286,6 +288,7 @@ enum Routes {
           Routes.receive => const ReceiveView(),
           Routes.scanner => const ScannerView(),
           Routes.confirmSending => const ConfirmSendingScope(),
+          Routes.settings => const SettingsView(),
         },
       );
 }

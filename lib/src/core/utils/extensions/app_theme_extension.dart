@@ -71,3 +71,14 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
     );
   }
 }
+
+final kDarkExtraColors = ExtraColors(
+  mainGridLineColor: const Color(0x1AFFFFFF),
+  gridLinesColor: const Color(0x11FFFFFF),
+  contentColorGreen: const Color.fromARGB(255, 47, 194, 162),
+  contentColorRed: const Color.fromARGB(255, 226, 54, 91),
+  gradientGainColor: const Color.fromARGB(255, 114, 235, 101),
+  gradientLossColor: const Color.fromARGB(255, 255, 70, 70),
+);
+
+final kLightExtraColors = kDarkExtraColors;

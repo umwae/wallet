@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 
-enum TabIndex { home, transactions }
+enum TabIndex { home, transactions, settings }
 
 final defaultStacks = {
   TabIndex.home: [Routes.home.toPage()],
   TabIndex.transactions: [Routes.transactions.toPage()],
-  // TabIndex.settings: [const MaterialPage(child: SettingsScreen())],
+  TabIndex.settings: [Routes.settings.toPage()],
 };
 
 final Map<TabIndex, ValueNotifier<NavPages>> controllers = {
   TabIndex.home: ValueNotifier([Routes.home.toPage()]),
   TabIndex.transactions: ValueNotifier([Routes.transactions.toPage()]),
+  TabIndex.settings: ValueNotifier([Routes.settings.toPage()]),
 };
 
 //------------------------------------------------

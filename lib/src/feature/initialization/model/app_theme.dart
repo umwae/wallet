@@ -19,16 +19,7 @@ final class AppTheme with Diagnosticable {
             // onSurfaceVariant: const Color.fromARGB(255, 144, 164, 194),
           ),
           extensions: [
-            ExtraColors(
-              mainGridLineColor: const Color(0x1AFFFFFF),
-              gridLinesColor: const Color(0x11FFFFFF),
-              // contentColorGreen: const Color(0xFF3BFF49),
-              // contentColorRed: const Color.fromARGB(255, 232, 0, 0),
-              contentColorGreen: const Color.fromARGB(255, 47, 194, 162),
-              contentColorRed: const Color.fromARGB(255, 226, 54, 91),
-              gradientGainColor: const Color.fromARGB(255, 114, 235, 101),
-              gradientLossColor: const Color.fromARGB(255, 255, 70, 70),
-            ),
+            kDarkExtraColors,
           ],
           useMaterial3: true,
         ),
@@ -36,6 +27,9 @@ final class AppTheme with Diagnosticable {
           colorSchemeSeed: seed,
           brightness: Brightness.light,
           useMaterial3: true,
+          extensions: [
+            kLightExtraColors,
+          ],
         );
 
   /// The type of theme to use.
@@ -55,6 +49,16 @@ final class AppTheme with Diagnosticable {
     themeMode: ThemeMode.system,
     seed: const Color.fromARGB(255, 173, 134, 239),
   );
+
+  AppTheme copyWith({
+    ThemeMode? themeMode,
+    Color? seed,
+  }) {
+    return AppTheme(
+      themeMode: themeMode ?? this.themeMode,
+      seed: seed ?? this.seed,
+    );
+  }
 
   /// The [ThemeData] for this [AppTheme].
   /// This is computed based on the [themeMode].
