@@ -17,6 +17,7 @@ import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
+import 'package:stonwallet/src/feature/navdec/animated_page.dart';
 import 'package:stonwallet/src/feature/receive/view/receive_view.dart';
 import 'package:stonwallet/src/feature/send/confirm_sending_scope.dart';
 import 'package:stonwallet/src/feature/send/scanner.dart';
@@ -265,7 +266,8 @@ enum Routes {
   const Routes();
 
   /// Converts the route to a [MaterialPage].
-  Page<Object?> toPage({Map<String, Object?>? arguments, LocalKey? key}) => MaterialPage<void>(
+  Page<Object?> toPage({Map<String, Object?>? arguments, LocalKey? key}) =>
+      AnimatedMaterialPage<void>(
         name: name,
         arguments: arguments,
         key: switch ((key, arguments)) {
