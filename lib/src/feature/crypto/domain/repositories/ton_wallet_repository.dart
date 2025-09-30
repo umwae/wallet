@@ -6,4 +6,11 @@ abstract class TonWalletRepository {
   Future<double?> getBalance(dynamic openedWallet);
   Future<WalletContractV4R2> openWallet(SecureStorageService secureStorage);
   Future<List<TransactionEntity>> fetchTransactions(InternalAddress address);
+  Future<void> createTransfer(
+    WalletContractV4R2 openedContract,
+    String address,
+    String amount,
+    String message,
+    SecureStorageService secureStorage,
+  );
 }

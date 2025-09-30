@@ -54,7 +54,7 @@ class NavigationCubit extends Cubit<NavigationState> {
   void push(Page<Object?> page, {TabIndex? tab}) {
     final stack = NavPages.from(controllers[tab ?? state.currentTab]!.value);
     stack.add(page);
-    controllers[tab]!.value = stack;
+    controllers[tab ?? state.currentTab]!.value = stack;
     emit(
       state.copyWith(stacks: {...state.stacks, (tab ?? state.currentTab): stack}, currentTab: tab),
     );
@@ -69,12 +69,13 @@ class NavigationCubit extends Cubit<NavigationState> {
 
   bool canPop({TabIndex? tab}) => state.stacks[tab ?? state.currentTab]!.length > 1;
 
-  void popInTab(TabIndex tab) {
-    final stack = NavPages.from(controllers[tab]!.value);
+  void pop({TabIndex? tab}) {
+    final stack = NavPages.from(controllers[tab ?? state.currentTab]!.value);
     if (stack.length > 1) {
       stack.removeLast();
-      controllers[tab]!.value = stack;
-      emit(state.copyWith(stacks: {...state.stacks, tab: stack}, currentTab: tab));
+      controllers[tab ?? state.currentTab]!.value = stack;
+      emit(state
+          .copyWith(stacks: {...state.stacks, (tab ?? state.currentTab): stack}, currentTab: tab));
     }
   }
 

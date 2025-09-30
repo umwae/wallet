@@ -68,4 +68,31 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
     }
     return entities;
   }
+
+  @override
+  Future<void> createTransfer(
+    WalletContractV4R2 openedContract,
+    String address,
+    String amount,
+    String message,
+    SecureStorageService secureStorage,
+  ) async {
+    var keyPair = await secureStorage.getKeyPair();
+    keyPair ??= await _generateAndSaveKeyPair(secureStorage);
+    final seqno = await openedContract.getSeqno();
+    final transfer = openedContract.createTransfer(
+      seqno: seqno,
+      privateKey: keyPair.privateKey,
+      messages: [
+        internal(
+          to: SiaString(address),
+          value: SbiString(amount.toString()),
+          body: ScString(message),
+        ),
+      ],
+    );
+    logger?.info(
+      'New transfer: $amount TON to $address}',
+    );
+  }
 }
