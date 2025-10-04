@@ -16,23 +16,29 @@ class MainNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        splashFactory: NoSplash.splashFactory,
-        // highlightColor: Colors.transparent,
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16.0),
+        topRight: Radius.circular(16.0),
       ),
-      child: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        onTap: onTap,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Assets'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Transactions'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        ],
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          splashFactory: NoSplash.splashFactory,
+          // highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white54,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentIndex,
+          onTap: onTap,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Кошелек'),
+            BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Транзакции'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Настройки'),
+          ],
+        ),
       ),
     );
   }

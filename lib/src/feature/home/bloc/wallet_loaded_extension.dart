@@ -10,7 +10,7 @@ import 'package:stonwallet/src/feature/home/bloc/wallet_bloc.dart';
 extension WalletLoadedX on WalletLoaded {
   WalletEntity toWalletEntity({required NumberFormat formatter, required BuildContext context}) {
     final extraColors = Theme.of(context).extension<ExtraColors>()!;
-    final assets = coins.map((c) => c.toCoinEntity()).toList();
+    final assets = filteredCoins.map((c) => c.toCoinEntity()).toList();
     //Заполняем балансы каждой криптовалюты
     for (final c in assets) {
       final cryptoFormatter =
@@ -27,7 +27,7 @@ extension WalletLoadedX on WalletLoaded {
               : Colors.transparent;
     }
 
-    final totalTonBalance = (coins
+    final totalTonBalance = (filteredCoins
                 .firstWhereOrNull((c) => c.id == 'the-open-network')
                 ?.marketData
                 .currentPrice['rub'] ??

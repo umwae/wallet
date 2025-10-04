@@ -23,6 +23,13 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
   // static const Color contentColorRed = Color.fromARGB(255, 232, 0, 0);
   // static const Color contentColorCyan = Color(0xFF50E4FF);
 
+  Color bgGradientStart;
+  Color bgGradientEnd;
+  Color buttonGradientGreenStart;
+  Color buttonGradientGreenEnd;
+  Color buttonGradientPurpleStart;
+  Color buttonGradientPurpleEnd;
+  //--------------
   Color mainGridLineColor;
   Color gridLinesColor;
   Color contentColorGreen;
@@ -31,6 +38,13 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
   Color gradientLossColor;
 
   ExtraColors({
+    required this.bgGradientStart,
+    required this.bgGradientEnd,
+    required this.buttonGradientGreenStart,
+    required this.buttonGradientGreenEnd,
+    required this.buttonGradientPurpleStart,
+    required this.buttonGradientPurpleEnd,
+    //--------------
     required this.mainGridLineColor,
     required this.gridLinesColor,
     required this.contentColorGreen,
@@ -41,6 +55,13 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
 
   @override
   ExtraColors copyWith({
+    Color? bgGradientStart,
+    Color? bgGradientEnd,
+    Color? buttonGradientGreenStart,
+    Color? buttonGradientGreenEnd,
+    Color? buttonGradientPurpleStart,
+    Color? buttonGradientPurpleEnd,
+    //--------------
     Color? mainGridLineColor,
     Color? gridLinesColor,
     Color? contentColorGreen,
@@ -49,6 +70,13 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
     Color? gradientLossColor,
   }) {
     return ExtraColors(
+      bgGradientStart: bgGradientStart ?? this.bgGradientStart,
+      bgGradientEnd: bgGradientEnd ?? this.bgGradientEnd,
+      buttonGradientGreenStart: buttonGradientGreenStart ?? this.buttonGradientGreenStart,
+      buttonGradientGreenEnd: buttonGradientGreenEnd ?? this.buttonGradientGreenEnd,
+      buttonGradientPurpleStart: buttonGradientPurpleStart ?? this.buttonGradientPurpleStart,
+      buttonGradientPurpleEnd: buttonGradientPurpleEnd ?? this.buttonGradientPurpleEnd,
+      //--------------
       mainGridLineColor: mainGridLineColor ?? this.mainGridLineColor,
       gridLinesColor: gridLinesColor ?? this.gridLinesColor,
       contentColorGreen: contentColorGreen ?? this.contentColorGreen,
@@ -62,6 +90,16 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
   ExtraColors lerp(ThemeExtension<ExtraColors>? other, double t) {
     if (other is! ExtraColors) return this;
     return ExtraColors(
+      bgGradientStart: Color.lerp(bgGradientStart, other.bgGradientStart, t)!,
+      bgGradientEnd: Color.lerp(bgGradientEnd, other.bgGradientEnd, t)!,
+      buttonGradientGreenStart:
+          Color.lerp(buttonGradientGreenStart, other.buttonGradientGreenStart, t)!,
+      buttonGradientGreenEnd: Color.lerp(buttonGradientGreenEnd, other.buttonGradientGreenEnd, t)!,
+      buttonGradientPurpleStart:
+          Color.lerp(buttonGradientPurpleStart, other.buttonGradientPurpleStart, t)!,
+      buttonGradientPurpleEnd:
+          Color.lerp(buttonGradientPurpleEnd, other.buttonGradientPurpleEnd, t)!,
+      //--------------
       mainGridLineColor: Color.lerp(mainGridLineColor, other.mainGridLineColor, t)!,
       gridLinesColor: Color.lerp(gridLinesColor, other.gridLinesColor, t)!,
       contentColorGreen: Color.lerp(contentColorGreen, other.contentColorGreen, t)!,
@@ -73,6 +111,13 @@ class ExtraColors extends ThemeExtension<ExtraColors> {
 }
 
 final kDarkExtraColors = ExtraColors(
+  bgGradientStart: const Color(0xFF1C0F2B),
+  bgGradientEnd: const Color(0xFF0F1724),
+  buttonGradientGreenStart: const Color(0xFF9B7BEA),
+  buttonGradientGreenEnd: const Color(0xFF6EE7B7),
+  buttonGradientPurpleStart: Colors.deepPurple,
+  buttonGradientPurpleEnd: const Color(0xFF9B7BEA),
+  //--------------
   mainGridLineColor: const Color(0x1AFFFFFF),
   gridLinesColor: const Color(0x11FFFFFF),
   contentColorGreen: const Color.fromARGB(255, 47, 194, 162),

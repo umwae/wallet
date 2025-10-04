@@ -17,12 +17,14 @@ final class AppTheme with Diagnosticable {
           ).copyWith(
             onSurfaceVariant: const Color.fromARGB(255, 132, 132, 132),
             // onSurfaceVariant: const Color.fromARGB(255, 144, 164, 194),
+            surfaceContainerHighest: const Color(0xFF24152E),
+            surfaceContainerLow: const Color(0xFF2F2436),
           ),
           extensions: [
             kDarkExtraColors,
           ],
           useMaterial3: true,
-        ),
+        ).copyWith(scaffoldBackgroundColor: Colors.transparent),
         lightTheme = ThemeData(
           colorSchemeSeed: seed,
           brightness: Brightness.light,
@@ -30,7 +32,7 @@ final class AppTheme with Diagnosticable {
           extensions: [
             kLightExtraColors,
           ],
-        );
+        ).copyWith(scaffoldBackgroundColor: Colors.transparent);
 
   /// The type of theme to use.
   final ThemeMode themeMode;
@@ -53,6 +55,7 @@ final class AppTheme with Diagnosticable {
   AppTheme copyWith({
     ThemeMode? themeMode,
     Color? seed,
+    Color? scaffoldBackgroundColor,
   }) {
     return AppTheme(
       themeMode: themeMode ?? this.themeMode,

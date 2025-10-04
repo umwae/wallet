@@ -9,8 +9,24 @@ sealed class WalletEvent {}
 
 class WalletLoadDataEvent extends WalletEvent {}
 
+class WalletFilterEvent extends WalletEvent {
+  final int? filter;
+  WalletFilterEvent(this.filter);
+}
+
 // States
-sealed class WalletState {}
+class WalletState {
+  final WalletFilter filter;
+  WalletState({this.filter = WalletFilter.all});
+
+  WalletState copyWith({
+    WalletFilter? filter,
+  }) {
+    return WalletState(
+      filter: filter ?? this.filter,
+    );
+  }
+}
 
 class WalletInitial extends WalletState {}
 
@@ -30,7 +46,43 @@ class WalletLoaded extends WalletState {
     required this.balances,
     required this.coins,
     required this.address,
+    super.filter,
   });
+
+  @override
+  WalletLoaded copyWith({
+    WalletFilter? filter,
+    Map<String, double?>? balances,
+    List<CoinGeckoDetails>? coins,
+    String? address,
+  }) {
+    return WalletLoaded(
+      filter: filter ?? this.filter,
+      balances: balances ?? this.balances,
+      coins: coins ?? this.coins,
+      address: address ?? this.address,
+    );
+  }
+
+  List<CoinGeckoDetails> get filteredCoins => filter.coinIds.isEmpty
+      ? coins
+      : coins.where((coin) => filter.coinIds.contains(coin.id)).toList();
+}
+
+enum WalletFilter {
+  all([]),
+  tonBased(['the-open-network']);
+
+  final List<String> coinIds;
+  const WalletFilter(this.coinIds);
+  String get name {
+    switch (this) {
+      case WalletFilter.all:
+        return 'Все активы';
+      case WalletFilter.tonBased:
+        return 'TON based';
+    }
+  }
 }
 
 class WalletBloc extends Bloc<WalletEvent, WalletState> {
@@ -47,6 +99,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         _openTonWalletUseCase = openTonWalletUseCase,
         super(WalletInitial()) {
     on<WalletLoadDataEvent>(_onLoadData);
+    on<WalletFilterEvent>(_onSetFilter);
   }
 
   Future<void> _onLoadData(
@@ -58,7 +111,14 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     try {
       // Загружаем данные параллельно для оптимизации
       final openedWallet = await _openTonWalletUseCase.call();
-      final ids = ['bitcoin', 'tether', 'the-open-network'];
+      final ids = [
+        'bitcoin',
+        'tether',
+        'the-open-network',
+        'ethereum',
+        'solana',
+        'ripple',
+      ];
       final results = await Future.wait([
         _getTonWalletBalanceUseCase.call(openedWallet),
         Future.wait(ids.map(_getCoinDetailsUseCase.call)),
@@ -74,11 +134,27 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         WalletLoaded(
           balances: balances,
           coins: coins ?? [],
-          address: openedWallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true),
+          address:
+              openedWallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true),
         ),
       );
     } catch (e) {
       emit(WalletFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onSetFilter(
+    WalletFilterEvent event,
+    Emitter<WalletState> emit,
+  ) async {
+    if (event.filter == null) return;
+
+    final newFilter = WalletFilter.values[event.filter!];
+
+    if (state is WalletLoaded) {
+      emit((state as WalletLoaded).copyWith(filter: newFilter));
+    } else {
+      emit(state.copyWith(filter: newFilter));
     }
   }
 }

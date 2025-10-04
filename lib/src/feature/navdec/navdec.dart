@@ -14,7 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
 import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
-import 'package:stonwallet/src/feature/home/view/home_view.dart';
+import 'package:stonwallet/src/feature/home/bloc/home_scope.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
 import 'package:stonwallet/src/feature/navdec/animated_page.dart';
@@ -280,7 +280,7 @@ enum Routes {
           _ => ValueKey<String>(name),
         },
         child: switch (this) {
-          Routes.home => const HomeView(),
+          Routes.home => const HomeScope(),
           Routes.login => const LoginPage(),
           Routes.counter => const CounterPage(),
           Routes.currentDetail => const CurrentDetailScope(),
@@ -302,6 +302,7 @@ class TabNavigator extends StatelessWidget {
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {
         return Scaffold(
+          extendBody: true,
           body: IndexedStack(
             index: state.currentTab.index,
             children: TabIndex.values.map((tab) {
@@ -312,7 +313,8 @@ class TabNavigator extends StatelessWidget {
               );
             }).toList(),
           ),
-          bottomNavigationBar: MainNavigationBar(
+          bottomNavigationBar: 
+          MainNavigationBar(
             currentIndex: state.currentTab.index,
             onTap: (i) => context.read<NavigationCubit>().switchTab(
                   TabIndex.values[i],
