@@ -1,3 +1,4 @@
+import 'package:stonwallet/src/core/exceptions/app_exception_mapper.dart';
 import 'package:stonwallet/src/feature/crypto/data/datasources/coingecko_api_service.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_coin.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
@@ -15,8 +16,8 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   Future<void> ping() async {
     try {
       await _apiService.ping(apiKey: _apiKey);
-    } catch (e) {
-      throw Exception('Failed to authenticate with CoinGecko API: $e');
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
   }
 
@@ -24,8 +25,8 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   Future<List<CoinGeckoCoin>> getCoinsList() async {
     try {
       return await _apiService.getCoinsList(apiKey: _apiKey);
-    } catch (e) {
-      throw Exception('Failed to fetch coins list: $e');
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
   }
 
@@ -33,8 +34,8 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
   Future<CoinGeckoDetails> getCoinById(String id) async {
     try {
       return await _apiService.getCoinById(id: id, apiKey: _apiKey);
-    } catch (e) {
-      throw Exception('Failed to fetch coin details: $e');
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
   }
 
@@ -57,8 +58,8 @@ class CoinGeckoRepositoryImpl implements CoinGeckoRepository {
         interval: interval,
       ))
           .toChartPoints();
-    } catch (e) {
-      throw Exception('Failed to fetch coin history chart: $e');
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
   }
 }

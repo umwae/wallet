@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
 import 'package:stonwallet/src/feature/crypto/data/models/coingecko_details.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_ton_wallet_balance_usecase.dart';
@@ -138,8 +139,9 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
               openedWallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true),
         ),
       );
-    } catch (e) {
-      emit(WalletFailure(e.toString()));
+    } on AppException catch (e) {
+      emit(WalletFailure(e.message));
+      rethrow;
     }
   }
 

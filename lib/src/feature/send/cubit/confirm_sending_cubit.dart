@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/create_transfer_usecase.dart';
 import 'package:tonutils/tonutils.dart';
 
@@ -35,8 +36,9 @@ class TransferCubit extends Cubit<TransferState> {
         message,
       );
       emit(TransferIdle(amount));
-    } catch (e) {
-      emit(TransferError('Ошибка перевода средств: $e'));
+    } on AppException catch (e) {
+      emit(TransferError(e.message));
+      rethrow;
     }
   }
 }

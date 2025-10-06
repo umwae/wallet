@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
 import 'package:tonutils/tonutils.dart';
 
 extension MessageComment on Message {
@@ -18,8 +19,11 @@ extension MessageComment on Message {
       // Остаток читаем как байты
       final remainingBytes = slice.loadList(slice.remainingBits ~/ 8);
       return utf8.decode(remainingBytes);
-    } catch (_) {
-      return null;
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(
+        ParsingException('Failed to parse transaction message', inner: e),
+        st,
+      );
     }
   }
 }

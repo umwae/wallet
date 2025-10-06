@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception_mapper.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
 
@@ -43,8 +44,8 @@ class DeepLinkBloc extends Bloc<DeepLinkReceived, Uri?> {
       (uri) {
         add(DeepLinkReceived(uri));
       },
-      onError: (dynamic e) {
-        debugPrint('[DBG] uriLinkStream error: $e');
+      onError: (Object e, StackTrace st) {
+        Error.throwWithStackTrace(e.toAppException(), st);
       },
     );
   }

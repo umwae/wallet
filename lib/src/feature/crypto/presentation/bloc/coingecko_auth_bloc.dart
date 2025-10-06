@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/ping_coingecko_usecase.dart';
 
 // Events
@@ -34,12 +35,12 @@ class CoinGeckoAuthBloc extends Bloc<CoinGeckoAuthEvent, CoinGeckoAuthState> {
     Emitter<CoinGeckoAuthState> emit,
   ) async {
     emit(CoinGeckoAuthLoading());
-
     try {
       await _authenticateUseCase();
       emit(CoinGeckoAuthSuccess());
-    } catch (e) {
-      emit(CoinGeckoAuthFailure(e.toString()));
+    } on AppException catch (e) {
+      emit(CoinGeckoAuthFailure(e.message));
+      rethrow;
     }
   }
 }

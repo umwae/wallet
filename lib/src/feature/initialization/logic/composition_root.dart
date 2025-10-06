@@ -124,10 +124,10 @@ class DependenciesFactory extends AsyncFactory<DependenciesContainer> {
     final settingsBloc = await SettingsBlocFactory(sharedPreferences).create();
 
     // --- CoinGecko dependencies ---
-    final coinGeckoDio = Dio()
-      ..interceptors.add(
-        LoggingInterceptor(logger.withPrefix('[COINGECKO-API]')),
-      );
+    final coinGeckoDio = Dio();
+      // ..interceptors.add(
+      //   LoggingInterceptor(logger.withPrefix('[COINGECKO-API]')),
+      // );
     final coinGeckoApiService = CoinGeckoApiService(coinGeckoDio);
     final coinGeckoRepository = CoinGeckoRepositoryImpl(coinGeckoApiService, coinGeckoApiKey);
     final coinGeckoUseCase = PingCoinGeckoUseCase(coinGeckoRepository);

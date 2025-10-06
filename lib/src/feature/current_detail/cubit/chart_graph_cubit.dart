@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
 import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data_entity.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_market_chart_range.dart';
 
@@ -37,8 +38,9 @@ class ChartGraphCubit extends Cubit<ChartGraphState> {
         interval: interval,
       );
       emit(ChartGraphLoaded(result));
-    } catch (e) {
-      emit(ChartGraphError('Ошибка загрузки графика: $e'));
+    } on AppException catch (e) {
+      emit(ChartGraphError(e.message));
+      rethrow;
     }
   }
 }

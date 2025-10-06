@@ -1,3 +1,5 @@
+import 'package:stonwallet/src/core/exceptions/app_exception.dart';
+import 'package:stonwallet/src/core/exceptions/app_exception_mapper.dart';
 import 'package:stonwallet/src/core/utils/logger.dart';
 import 'package:stonwallet/src/feature/transactions/domain/entities/transaction_entity.dart';
 import 'package:stonwallet/src/feature/transactions/domain/mappers/transaction_entity_mapper.dart';
@@ -23,50 +25,60 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
       logger
           ?.info('Wallet address: $addr, balance: $balance, workChain: ${openedWallet.workChain}');
       return balance;
-    } on Object catch (e, stackTrace) {
-      logger?.error(e.toString(), stackTrace: stackTrace);
-      rethrow;
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
   }
 
   @override
   Future<WalletContractV4R2> openWallet(SecureStorageService secureStorage) async {
-    var keyPair = await secureStorage.getKeyPair();
-    keyPair ??= await _generateAndSaveKeyPair(secureStorage);
-    final wallet = WalletContractV4R2.create(publicKey: keyPair.publicKey);
-    final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
-    final opened = client.open(wallet);
-    logger?.info(
-      'Wallet opened: ${wallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true)}',
-    );
-    return opened;
+    try {
+      var keyPair = await secureStorage.getKeyPair();
+      keyPair ??= await _generateAndSaveKeyPair(secureStorage);
+      final wallet = WalletContractV4R2.create(publicKey: keyPair.publicKey);
+      final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
+      final opened = client.open(wallet);
+      logger?.info(
+        'Wallet opened: ${wallet.address.toString(isUrlSafe: true, isBounceable: true, isTestOnly: true)}',
+      );
+      return opened;
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
+    }
   }
 
   Future<KeyPair> _generateAndSaveKeyPair(SecureStorageService secureStorage) async {
-    final mnemonics = tonkeeperMnemonics.split(' ');
-    final keyPair = Mnemonic.toKeyPair(
-      mnemonics,
-    ); //TODO: запускать в отдельном потоке - секунд 40 генерит, очень долго
-    await secureStorage.saveKeyPair(keyPair);
-    return keyPair;
+    try {
+      final mnemonics = tonkeeperMnemonics.split(' ');
+      final keyPair = Mnemonic.toKeyPair(
+        mnemonics,
+      ); //TODO: запускать в отдельном потоке - секунд 40 генерит, очень долго
+      await secureStorage.saveKeyPair(keyPair);
+      return keyPair;
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(DataException('Key generation error', inner: e), st);
+    }
   }
 
   @override
   Future<List<TransactionEntity>> fetchTransactions(InternalAddress address) async {
-    final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
-    var transactions = <Transaction>[];
     try {
+      final client = TonJsonRpc('$baseUrl/jsonRPC', testnetApiKey);
+      var transactions = <Transaction>[];
       transactions = await client.getTransactions(
         address,
         limit: 2,
       );
-    } catch (identifier) {}
-    final entities = <TransactionEntity>[];
-    for (final tx in transactions) {
-      final separatedTransactions = mapRawTransaction(tx, address.toString());
-      entities.addAll(separatedTransactions);
+
+      final entities = <TransactionEntity>[];
+      for (final tx in transactions) {
+        final separatedTransactions = mapRawTransaction(tx, address.toString());
+        entities.addAll(separatedTransactions);
+      }
+      return entities;
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
     }
-    return entities;
   }
 
   @override
@@ -77,22 +89,26 @@ class TonWalletRepositoryImpl implements TonWalletRepository {
     String message,
     SecureStorageService secureStorage,
   ) async {
-    var keyPair = await secureStorage.getKeyPair();
-    keyPair ??= await _generateAndSaveKeyPair(secureStorage);
-    final seqno = await openedContract.getSeqno();
-    final transfer = openedContract.createTransfer(
-      seqno: seqno,
-      privateKey: keyPair.privateKey,
-      messages: [
-        internal(
-          to: SiaString(address),
-          value: SbiString(amount.toString()),
-          body: ScString(message),
-        ),
-      ],
-    );
-    logger?.info(
-      'New transfer: $amount TON to $address}',
-    );
+    try {
+      var keyPair = await secureStorage.getKeyPair();
+      keyPair ??= await _generateAndSaveKeyPair(secureStorage);
+      final seqno = await openedContract.getSeqno();
+      final transfer = openedContract.createTransfer(
+        seqno: seqno,
+        privateKey: keyPair.privateKey,
+        messages: [
+          internal(
+            to: SiaString(address),
+            value: SbiString(amount.toString()),
+            body: ScString(message),
+          ),
+        ],
+      );
+      logger?.info(
+        'New transfer: $amount TON to $address}',
+      );
+    } on Object catch (e, st) {
+      Error.throwWithStackTrace(e.toAppException(), st);
+    }
   }
 }
