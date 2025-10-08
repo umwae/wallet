@@ -1,10 +1,7 @@
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:stonwallet/src/core/constant/localization/localization.dart';
 import 'package:stonwallet/src/feature/auth/bloc/auth_bloc.dart';
 import 'package:stonwallet/src/feature/auth/guard/auth_guard.dart';
-import 'package:stonwallet/src/feature/counter/counter.dart';
-import 'package:stonwallet/src/feature/home/view/home_view.dart';
 import 'package:stonwallet/src/feature/initialization/model/app_theme.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';

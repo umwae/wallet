@@ -19,7 +19,7 @@ class TransferError extends TransferState {
 
 class TransferCubit extends Cubit<TransferState> {
   final CreateTransferUsecase useCase;
-  TransferCubit(this.useCase) : super(TransferLoading());
+  TransferCubit(this.useCase) : super(TransferIdle(null));
 
   Future<void> createTransfer({
     required WalletContractV4R2 openedContract,
@@ -41,4 +41,6 @@ class TransferCubit extends Cubit<TransferState> {
       rethrow;
     }
   }
+
+  Future<void> reset() async => emit(TransferIdle(null));
 }

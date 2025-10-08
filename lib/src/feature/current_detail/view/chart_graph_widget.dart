@@ -9,14 +9,14 @@ import 'package:stonwallet/src/feature/current_detail/domain/entities/chart_data
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 
-class ChartGraphView extends StatefulWidget {
-  const ChartGraphView({super.key});
+class ChartGraphWidget extends StatefulWidget {
+  const ChartGraphWidget({super.key});
 
   @override
-  State<ChartGraphView> createState() => _ChartGraphViewState();
+  State<ChartGraphWidget> createState() => _ChartGraphViewState();
 }
 
-class _ChartGraphViewState extends State<ChartGraphView> {
+class _ChartGraphViewState extends State<ChartGraphWidget> {
   bool showAvg = false;
 
   @override
@@ -41,17 +41,6 @@ class _ChartGraphViewState extends State<ChartGraphView> {
       builder: (context, state) {
         return BlocBuilder<ChartGraphCubit, ChartGraphState>(
           builder: (context, chartState) {
-            Widget chartWidget;
-            if (chartState is ChartGraphLoading) {
-              chartWidget = const Center(child: CircularProgressIndicator());
-            } else if (chartState is ChartGraphLoaded) {
-              chartWidget =
-                  LineChart(mainData(chartState.chartData, bullGradientColors, bearGradientColors));
-            } else if (chartState is ChartGraphError) {
-              chartWidget = Center(child: Text(chartState.message));
-            } else {
-              chartWidget = const SizedBox.shrink();
-            }
             return Column(
               children: [
                 Row(
@@ -65,7 +54,10 @@ class _ChartGraphViewState extends State<ChartGraphView> {
                   children: <Widget>[
                     AspectRatio(
                       aspectRatio: 1.70,
-                      child: chartWidget,
+                      child: LineChart(
+                        mainData((chartState as ChartGraphLoaded).chartData, bullGradientColors,
+                            bearGradientColors),
+                      ),
                     ),
                   ],
                 ),

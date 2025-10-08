@@ -10,9 +10,11 @@ import 'package:tonutils/tonutils.dart' show WalletContractV4R2;
 
 class ConfirmSendingView extends BaseStatefulPage {
   final String? address;
+  final VoidCallback? showSnackbarCallback;
 
   const ConfirmSendingView({
     required this.address,
+    this.showSnackbarCallback,
     super.key,
   });
 
@@ -31,6 +33,11 @@ class _ConfirmSendingViewState extends BaseStatefulPageState<ConfirmSendingView>
     super.initState();
     _amountController = TextEditingController(text: initialAmount);
     _commentController = TextEditingController(text: initialComment);
+    if (widget.showSnackbarCallback != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.showSnackbarCallback!();
+      });
+    }
   }
 
   @override
@@ -129,30 +136,17 @@ class _ConfirmSendingViewState extends BaseStatefulPageState<ConfirmSendingView>
             const Spacer(),
             SizedBox(
               width: double.infinity,
-              child: BlocListener<TransferCubit, TransferState>(
-                listener: (context, state) {
-                  if (state is TransferIdle && state.amount != null) {
-                    // Показываем snackbar и закрываем страницу
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Отправлены ${state.amount} TON по адресу ${widget.address}'),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  }
-                },
-                child: FilledButton(
-                  onPressed: () => _onConfirm(context, deps.openedWallet),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 3,
-                  ),
-                  child: const Text('Подтвердить и отправить'),
+              child: FilledButton(
+                onPressed: () => _onConfirm(context, deps.openedWallet),
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 3,
                 ),
+                child: const Text('Подтвердить и отправить'),
               ),
             ),
           ],

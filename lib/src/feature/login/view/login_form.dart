@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:stonwallet/src/core/widget/app_snackbar.dart';
 import 'package:stonwallet/src/feature/login/login.dart';
 import 'package:stonwallet/src/feature/navdec/navdec.dart';
 import 'package:stonwallet/src/feature/navdec/navigation_cubit.dart';
@@ -16,7 +17,7 @@ class LoginForm extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+              AppSnackBar('Authentication Failure', context),
             );
         }
       },

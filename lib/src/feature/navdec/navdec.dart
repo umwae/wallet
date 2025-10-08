@@ -12,7 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stonwallet/src/core/widget/main_navigation_bar.dart';
-import 'package:stonwallet/src/feature/counter/counter.dart';
 import 'package:stonwallet/src/feature/current_detail/current_detail.dart';
 import 'package:stonwallet/src/feature/home/bloc/home_scope.dart';
 import 'package:stonwallet/src/feature/login/view/login_page.dart';
@@ -257,7 +256,6 @@ class DebugObserver extends NavigatorObserver {
 enum Routes {
   home,
   login,
-  counter,
   currentDetail,
   transactions,
   confirmSending,
@@ -282,7 +280,6 @@ enum Routes {
         child: switch (this) {
           Routes.home => const HomeScope(),
           Routes.login => const LoginPage(),
-          Routes.counter => const CounterPage(),
           Routes.currentDetail => const CurrentDetailScope(),
           Routes.transactions => const TransactionsScope(),
           Routes.receive => const ReceiveView(),

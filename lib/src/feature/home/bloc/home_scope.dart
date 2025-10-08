@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/widget/app_error_widget.dart';
+import 'package:stonwallet/src/core/widget/app_loader.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_coin_details_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_ton_wallet_balance_usecase.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/open_ton_wallet_usecase.dart';
@@ -25,7 +27,20 @@ class HomeScope extends StatelessWidget {
 
     return BlocProvider(
       create: (_) => walletBloc..add(WalletLoadDataEvent()),
-      child: const HomeView(),
+      child: BlocBuilder<WalletBloc, WalletState>(
+        builder: (context, state) {
+          if (state is WalletLoaded) {
+            return const HomeView();
+          } else if (state is WalletFailure) {
+            return AppErrorWidget.fullscreen(
+              snackbarText: state.error,
+              onRetry: () => walletBloc..add(WalletLoadDataEvent()),
+            );
+          } else {
+            return const AppLoader.fullscreen();
+          }
+        },
+      ),
     );
   }
 }

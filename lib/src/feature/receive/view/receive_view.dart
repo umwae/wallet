@@ -58,10 +58,7 @@ class ReceiveView extends StatelessWidget {
                 icon: const Icon(Icons.copy),
                 color: colorScheme.primary,
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: address ?? '??????????????????'));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Адрес скопирован')),
-                  );
+                  Clipboard.setData(ClipboardData(text: address ?? ''));
                 },
               ),
             ],

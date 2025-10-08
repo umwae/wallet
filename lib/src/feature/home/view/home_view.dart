@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:ui' show ImageFilter;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:stonwallet/src/core/utils/extensions/app_theme_extension.dart';
@@ -100,43 +101,55 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Аватарка и кнопки
-                            Row(
-                              children: [
-                                IconButton.filled(
-                                  onPressed: () =>
-                                      context.read<NavigationCubit>().push(Routes.counter.toPage()),
-                                  icon: const Icon(Icons.lock),
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: colorScheme.primary,
-                                    foregroundColor: colorScheme.onPrimary,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'testaccount',
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      color: colorScheme.onSurface,
-                                      fontWeight: FontWeight.w600,
+                            BlocBuilder<WalletBloc, WalletState>(
+                              builder: (context, state) {
+                                return Row(
+                                  children: [
+                                    IconButton.filled(
+                                      onPressed: () => {},
+                                      icon: const Icon(Icons.lock),
+                                      style: IconButton.styleFrom(
+                                        backgroundColor: colorScheme.primary,
+                                        foregroundColor: colorScheme.onPrimary,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy),
-                                  color: colorScheme.onSurfaceVariant,
-                                  onPressed: () {},
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.qr_code),
-                                  color: colorScheme.onSurfaceVariant,
-                                  onPressed: () {},
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.notifications_none),
-                                  color: colorScheme.onSurfaceVariant,
-                                  onPressed: () {},
-                                ),
-                              ],
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'testaccount',
+                                        style: theme.textTheme.titleMedium?.copyWith(
+                                          color: colorScheme.onSurface,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.copy),
+                                      color: colorScheme.onSurfaceVariant,
+                                      onPressed: () => Clipboard.setData(
+                                        ClipboardData(
+                                          text: state is WalletLoaded ? state.address : '',
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.qr_code),
+                                      color: colorScheme.onSurfaceVariant,
+                                      onPressed: () => openBottomSheet(
+                                        context,
+                                        itemBuilder: (_) => ReceiveView(
+                                          address: state is WalletLoaded ? state.address : '',
+                                        ),
+                                      ),
+                                    ),
+                                    // IconButton(
+                                    //   icon: const Icon(Icons.notifications_none),
+                                    //   color: colorScheme.onSurfaceVariant,
+                                    //   onPressed: () {},
+                                    // ),
+                                  ],
+                                );
+                              },
                             ),
                             const SizedBox(height: 20),
                             // Баланс, кнопки Отправить и Получить
@@ -168,23 +181,15 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                 delegate: SliverChildListDelegate([
                   BlocBuilder<WalletBloc, WalletState>(
                     builder: (context, state) {
-                      if (state is WalletLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state is WalletFailure) {
-                        return Center(
-                          child: Text(
-                            'Ошибка: ${state.error}',
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                        );
-                      } else if (state is WalletLoaded) {
+                      if (state is WalletLoaded) {
                         final coinEntitys =
                             state.toWalletEntity(formatter: rubFormatter, context: context).assets;
                         return Column(
                           children: coinEntitys.map((c) => CoinCard(coinEntity: c)).toList(),
                         );
+                      } else {
+                        return const SizedBox.shrink();
                       }
-                      return const SizedBox.shrink();
                     },
                   ),
                 ]),
@@ -263,23 +268,24 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                 Expanded(
                   child: BlocBuilder<WalletBloc, WalletState>(
                     builder: (context, state) {
-                      return switch (state) {
-                        WalletLoaded() => _WalletAction(
-                            icon: Icons.arrow_downward,
-                            label: 'Получить',
-                            gradient: LinearGradient(
-                              colors: [
-                                extraColors.buttonGradientPurpleStart,
-                                extraColors.buttonGradientPurpleEnd,
-                              ],
-                            ),
-                            action: () => openBottomSheet(
-                              context,
-                              itemBuilder: (_) => ReceiveView(address: state.address),
-                            ),
+                      if (state is WalletLoaded) {
+                        return _WalletAction(
+                          icon: Icons.arrow_downward,
+                          label: 'Получить',
+                          gradient: LinearGradient(
+                            colors: [
+                              extraColors.buttonGradientPurpleStart,
+                              extraColors.buttonGradientPurpleEnd,
+                            ],
                           ),
-                        _ => const CircularProgressIndicator(),
-                      };
+                          action: () => openBottomSheet(
+                            context,
+                            itemBuilder: (_) => ReceiveView(address: state.address),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
                     },
                   ),
                 ),

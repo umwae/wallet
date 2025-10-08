@@ -22,8 +22,7 @@ class CurrentDetailScope extends StatelessWidget {
         BlocProvider<CurrentDetailCubit>(create: (_) => CurrentDetailCubit()),
         BlocProvider<ChartGraphCubit>(create: (_) => ChartGraphCubit(getMarketChartRangeUseCase)),
       ],
-      child:
-          coinEntity != null ? CurrentDetailView(coinEntity: coinEntity) : const SizedBox.shrink(),
+      child: CurrentDetailView(coinEntity: coinEntity!),
     );
   }
 }

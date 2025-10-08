@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stonwallet/src/core/widget/app_loader.dart';
+import 'package:stonwallet/src/core/widget/app_error_widget.dart';
 import 'package:stonwallet/src/feature/crypto/domain/usecases/get_market_chart_range.dart';
 import 'package:stonwallet/src/feature/current_detail/cubit/chart_graph_cubit.dart';
-import 'package:stonwallet/src/feature/current_detail/view/chart_graph_view.dart';
+import 'package:stonwallet/src/feature/current_detail/view/chart_graph_widget.dart';
 import 'package:stonwallet/src/feature/initialization/widget/dependencies_scope.dart';
 
 class ChartGraphScope extends StatelessWidget {
@@ -35,7 +37,17 @@ class ChartGraphScope extends StatelessWidget {
           to: to,
           interval: interval,
         ),
-      child: const ChartGraphView(),
+      child: BlocBuilder<ChartGraphCubit, ChartGraphState>(
+        builder: (context, state) {
+          if (state is ChartGraphLoaded) {
+            return const ChartGraphWidget();
+          } else if (state is ChartGraphError) {
+            return AppErrorWidget(height: 200, snackbarText: state.message);
+          } else {
+            return const AppLoader(height: 200);
+          }
+        },
+      ),
     );
   }
 }
