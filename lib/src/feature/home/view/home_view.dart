@@ -1,7 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,24 +64,15 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
       decimalDigits: 2,
     );
     return Scaffold(
-      // Градиентный фон
-      body: Container(
+      body: ColoredBox(
         color: extraColors.bgGradientEnd,
         child: SafeArea(
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverAppBar(
-                backgroundColor: extraColors.bgGradientStart,
-                // backgroundColor: Colors.transparent,
-                pinned: true,
-                floating: false,
-                snap: false,
-                toolbarHeight: 0,
-                collapsedHeight: 400,
-                expandedHeight: 400,
-                stretch: false,
-                flexibleSpace: DecoratedBox(
+              SliverToBoxAdapter(
+                // Градиентный фон шапки
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [extraColors.bgGradientStart, extraColors.bgGradientEnd],
@@ -157,20 +145,28 @@ class _HomeViewState extends BaseStatefulPageState<HomeView> with WidgetsBinding
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 8),
                       if (showPromo)
                         PromoCard(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                           onClosed: () => setState(() {
                             showPromo = false;
                           }),
                         ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: _buildFilters(context, filters),
-                      ),
                     ],
                   ),
+                ),
+              ),
+              // Фильтры
+              SliverAppBar(
+                backgroundColor: extraColors.bgGradientEnd,
+                surfaceTintColor: Colors.transparent,
+                pinned: true,
+                toolbarHeight: 0,
+                automaticallyImplyLeading: false,
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(72),
+                  child: _buildFilters(context, filters),
                 ),
               ),
               SliverToBoxAdapter(
@@ -343,7 +339,8 @@ class _WalletAction extends StatelessWidget {
 
 class PromoCard extends StatefulWidget {
   final VoidCallback onClosed;
-  const PromoCard({required this.onClosed, super.key});
+  final EdgeInsets? padding;
+  const PromoCard({required this.onClosed, this.padding, super.key});
   @override
   State<PromoCard> createState() => _PromoCardState();
 }
@@ -353,7 +350,7 @@ class _PromoCardState extends State<PromoCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16.0),
       child: AnimatedScale(
         scale: showPromo ? 1 : 0,
         duration: const Duration(milliseconds: 300),
